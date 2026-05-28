@@ -11,7 +11,7 @@ function AlmanacCover({ go, currentTemplate, instance }) {
 
       <div className="cover-twodoor-center">
         <h1 className="cover-twodoor-mark">
-          Factory<br/>of <span>Culture</span><span style={{color:"var(--accent)"}}>.</span>
+          Factory<br/>of <span className="heat-word">Culture</span><span className="heat-dot">.</span>
         </h1>
         <p className="cover-twodoor-deck">
           Infrastructure for groups that recur, commit, and earn.

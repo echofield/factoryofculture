@@ -118,7 +118,11 @@ body::after {
   line-height: 1;
 }
 .sidebar-mark .wordmark span {
-  color: var(--accent);
+  background: var(--heat-radial);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 .sidebar-mark .sub {
   font-family: var(--font-mono);
@@ -566,8 +570,17 @@ body::after {
   margin: 0;
   text-align: center;
 }
-.cover-twodoor-mark span {
-  color: var(--accent);
+.cover-twodoor-mark span { color: var(--accent); }
+
+/* Heat-clipped wordmark — "Culture" reads as molten metal, not painted */
+.cover-twodoor-mark .heat-word,
+.cover-twodoor-mark .heat-dot {
+  background: var(--heat-radial);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 24px rgba(232, 160, 32, 0.18));
 }
 
 .cover-twodoor-deck {
