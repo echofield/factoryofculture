@@ -2,6 +2,7 @@
 
 function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) {
   const t = window.TEMPLATES.find(x => x.code === currentTemplateCode) || window.TEMPLATES[0];
+  const challenge = PrimaryChallenge({ template: t });
 
   return (
     <div className="page">
@@ -51,6 +52,11 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
               <div className="sub">{t.place.split("·").slice(1).join("·").trim() || "any anchor"}</div>
             </div>
             <div className="sig">
+              <div className="key">Action unit</div>
+              <div className="val">{challenge.title}</div>
+              <div className="sub">{challenge.validation} validation · {challenge.reliability} impact</div>
+            </div>
+            <div className="sig">
               <div className="key">Mean reliability</div>
               <div className="val">{t.sealed.length ? (t.sealed.reduce((a,b)=>a+b.reliability,0)/t.sealed.length*100).toFixed(0)+"%" : "—"}</div>
               <div className="sub">{t.sealed.length} sealed editions · {t.sealed.reduce((a,b)=>a+b.forks,0)} forks</div>
@@ -58,36 +64,26 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
           </div>
 
           <SectionRule num="§00" label="Action Spine" right="Challenge is the economic unit" />
-          <div className="def-list">
-            <DefRow k="Kernel chain">
-              <div style={{display:"flex", flexWrap:"wrap", gap:6}}>
-                {window.KERNEL_CHAIN.map((step, i) => (
-                  <React.Fragment key={step}>
-                    <span className={"code-tag" + (step === "Challenge" ? " accent" : "")}>{step}</span>
-                    {i < window.KERNEL_CHAIN.length - 1 && <span className="code-tag">→</span>}
-                  </React.Fragment>
-                ))}
-              </div>
-            </DefRow>
-            <DefRow k="Challenge templates">
-              <div style={{display:"grid", gap:10}}>
-                {t.challengeTemplates.map((challenge) => (
-                  <div key={challenge.id} style={{border:"1px solid var(--rule)", padding:"12px 14px", background:"rgba(255,255,255,0.02)"}}>
-                    <div style={{display:"flex", justifyContent:"space-between", gap:12, alignItems:"baseline"}}>
-                      <strong style={{fontFamily:"var(--font-display)", fontSize:15}}>{challenge.title}</strong>
-                      <span className="code-tag accent">{challenge.validation} validation</span>
-                    </div>
-                    <div className="code-tag" style={{marginTop:6}}>
-                      stake {challenge.stake} · reward {challenge.reward} · due {challenge.deadline} · reliability {challenge.reliability}
-                    </div>
-                    <div className="serif-em" style={{fontSize:13, marginTop:8, color:"var(--ink-3)"}}>
-                      proof · {challenge.proof.join(" / ")}
-                    </div>
+          <ActiveChallengeStrip template={t} />
+          <div className="action-spine-grid">
+            <div className="spine-panel main">
+              <div className="code-tag accent">Proof flow</div>
+              <ChallengeFlow />
+              <div className="spine-proof-list">
+                {challenge.proof.map((item, i) => (
+                  <div key={item}>
+                    <span>{String(i + 1).padStart(2, "0")}</span>
+                    <strong>{item}</strong>
                   </div>
                 ))}
               </div>
-            </DefRow>
+            </div>
+            <RewardTreasuryPreview challenge={challenge} template={t} />
           </div>
+          <DiamondPassage template={t} />
+
+          <SectionRule num="§00B" label="Forkable challenge templates" right={t.challengeTemplates.length + " inherited modules"} />
+          <ForkableChallengeTemplates template={t} />
 
           <SectionRule num="§01" label="Operating Shape" right="What recurs" />
           <div className="def-list">

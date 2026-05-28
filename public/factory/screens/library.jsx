@@ -1,6 +1,8 @@
 // Architecture Library — FC·010. Grid of 7 patterns. Click to open Pattern detail.
 
 function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
+  const activeTemplate = window.TEMPLATES.find(x => x.code === currentTemplateCode) || window.TEMPLATES[0];
+
   return (
     <div className="page">
       <div className="page-head">
@@ -20,9 +22,12 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
       </div>
 
       <SectionRule num="§01" label="Pattern Index" right="Sorted · By family code" />
+      <ActiveChallengeStrip template={activeTemplate} />
 
       <div className="tpl-grid">
-        {window.TEMPLATES.map(t => (
+        {window.TEMPLATES.map(t => {
+          const challenge = PrimaryChallenge({ template: t });
+          return (
           <div
             key={t.code}
             className={"tpl-card" + (t.code === currentTemplateCode ? " active" : "")}
@@ -39,14 +44,15 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
               <div className="name">{t.name}</div>
               <p className="thesis">{t.thesis}</p>
             </div>
+            <ChallengeSignal challenge={challenge} compact />
             <div className="foot">
               <span>{t.sealed.length} sealed</span>
               <span>·</span>
               <span>{t.sealed.reduce((a,b)=>a+b.forks,0)} forks</span>
-              <span className="right">Open →</span>
+              <span className="right">Inspect →</span>
             </div>
           </div>
-        ))}
+        );})}
         {/* Filler "proposed" card to keep grid clean at 8 cells */}
         <div className="tpl-card proposed">
           <div className="head">
@@ -57,15 +63,16 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
             <div className="numeral">
               08<span className="dot">.</span>
             </div>
-            <div className="name">Pattern in proposal</div>
+            <div className="name">Compose a Pattern</div>
             <p className="thesis">
-              Submit a new operational pattern for review. Patterns enter the library
-              only after one full cycle and a validated proof-of-architecture.
+              Start with the repeated action, then make proof, validation, reward, and
+              forkability legible before the pattern is sealed.
             </p>
+            <ComposeQuestions />
           </div>
           <div className="foot">
-            <span>Closed review</span>
-            <span style={{textAlign:"right"}}>Propose →</span>
+            <span>Draft aperture</span>
+            <span style={{textAlign:"right"}}>Compose →</span>
           </div>
         </div>
       </div>
@@ -77,9 +84,9 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
           ["Place logic", "Where the pattern anchors physically."],
           ["Cadence", "How often the ritual runs and for how long."],
           ["Roles", "The shapes a member can hold."],
-          ["Proof rules", "What counts as having shown up."],
-          ["Rewards", "What carries forward between cycles."],
-          ["Treasury", "How money and goods flow."],
+          ["Challenge spine", "What the community repeatedly does together."],
+          ["Proof flow", "Commitment, attendance, proof, validation, reward, trace."],
+          ["Treasury", "How reward and reserve move after validation."],
           ["Governance", "Who decides what, and how it changes."],
           ["Onboarding", "How a new member becomes a witness, then a member."]
         ].map(([k,v]) => (

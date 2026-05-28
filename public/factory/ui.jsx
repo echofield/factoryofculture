@@ -118,6 +118,153 @@ function Slider({ value, min, max, step, onChange, unit, ticks }) {
   );
 }
 
+function PrimaryChallenge({ template }) {
+  return template.challengeTemplates?.[0] || {
+    title: "Declare one useful commitment",
+    stake: "20 SYM",
+    reward: "50 SYM",
+    deadline: "7 days",
+    validation: "witness",
+    reliability: "+8",
+    proof: ["attendance", "proof artifact", "validation note"]
+  };
+}
+
+function ChallengeFlow({ compact }) {
+  const steps = ["Commitment", "Attendance", "Proof", "Validation", "Reward", "Trace"];
+  return (
+    <div className={"challenge-flow" + (compact ? " compact" : "")}>
+      {steps.map((step, i) => (
+        <React.Fragment key={step}>
+          <span className={step === "Commitment" ? "hot" : ""}>{step}</span>
+          {i < steps.length - 1 && <b>→</b>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function ChallengeSignal({ challenge, compact }) {
+  const proofCount = challenge.proof?.length || 0;
+  return (
+    <div className={"challenge-signal" + (compact ? " compact" : "")}>
+      <div className="signal-top">
+        <span className="live-dot"></span>
+        <span>active challenge</span>
+        <span className="signal-mode">{challenge.validation} validation</span>
+      </div>
+      <div className="signal-title">{challenge.title}</div>
+      <div className="signal-meta">
+        <span>{challenge.stake} stake</span>
+        <span>{challenge.reward} reward</span>
+        <span>{challenge.reliability} reliability</span>
+        <span>{proofCount} proofs</span>
+      </div>
+    </div>
+  );
+}
+
+function ActiveChallengeStrip({ template }) {
+  const challenge = PrimaryChallenge({ template });
+  return (
+    <div className="active-challenge-strip">
+      <div>
+        <div className="code-tag accent">Challenge spine</div>
+        <div className="strip-title">{challenge.title}</div>
+      </div>
+      <ChallengeFlow compact />
+      <div className="strip-economics">
+        <span>stake {challenge.stake}</span>
+        <span>reward {challenge.reward}</span>
+        <span>impact {challenge.reliability}</span>
+      </div>
+    </div>
+  );
+}
+
+function RewardTreasuryPreview({ challenge, template }) {
+  return (
+    <div className="reward-preview">
+      <div>
+        <span className="code-tag">Commitment stake</span>
+        <strong>{challenge.stake}</strong>
+        <small>declared before the cycle closes</small>
+      </div>
+      <div>
+        <span className="code-tag">Reward preview</span>
+        <strong>{challenge.reward}</strong>
+        <small>released after {challenge.validation} validation</small>
+      </div>
+      <div>
+        <span className="code-tag">Treasury movement</span>
+        <strong>{template.treasury.model}</strong>
+        <small>{template.treasury.split}</small>
+      </div>
+      <div>
+        <span className="code-tag">Reliability impact</span>
+        <strong>{challenge.reliability}</strong>
+        <small>fitness memory carried into future forks</small>
+      </div>
+    </div>
+  );
+}
+
+function DiamondPassage({ template }) {
+  const challenge = PrimaryChallenge({ template });
+  const meanReliability = template.sealed.length
+    ? template.sealed.reduce((sum, edition) => sum + edition.reliability, 0) / template.sealed.length
+    : 0;
+  const eligible = meanReliability >= 0.88 || Number(String(challenge.reliability).replace("+", "")) >= 10;
+  return (
+    <div className={"diamond-passage" + (eligible ? " eligible" : "")}>
+      <div className="diamond-mark">◇</div>
+      <div>
+        <div className="code-tag accent">Diamond passage</div>
+        <div className="diamond-title">{eligible ? "High-trust passage visible" : "Reliability passage forming"}</div>
+        <p>
+          Diamond appears when repeated challenges improve the organism:
+          reliable attendance, validated proof, treasury continuity, and useful forks.
+        </p>
+      </div>
+      <div className="diamond-score">
+        <strong>{meanReliability ? (meanReliability * 100).toFixed(0) + "%" : "—"}</strong>
+        <span>mean reliability</span>
+      </div>
+    </div>
+  );
+}
+
+function ForkableChallengeTemplates({ template }) {
+  return (
+    <div className="forkable-templates">
+      {template.challengeTemplates.map((challenge) => (
+        <div key={challenge.id} className="fork-template">
+          <div className="code-tag accent">{challenge.id}</div>
+          <strong>{challenge.title}</strong>
+          <p>{challenge.proof.join(" / ")}</p>
+          <div className="fork-meta">
+            <span>{challenge.deadline}</span>
+            <span>{challenge.validation}</span>
+            <span>{challenge.reward}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ComposeQuestions() {
+  return (
+    <ol className="compose-questions">
+      <li><span>01</span>What does this community repeatedly do?</li>
+      <li><span>02</span>What proves it happened?</li>
+      <li><span>03</span>Who validates it?</li>
+      <li><span>04</span>What is rewarded?</li>
+      <li><span>05</span>What can be forked?</li>
+    </ol>
+  );
+}
+
 function FamilyMark({ family }) {
   // Returns a tiny glyph mark used in the lineage / marketplace rows. Each family gets a different mark.
   const marks = {
@@ -127,5 +274,5 @@ function FamilyMark({ family }) {
 }
 
 Object.assign(window, {
-  CodeTag, SectionRule, NumeralPlate, Bar, DefRow, ArchiveGroup, TokenList, Btn, Seg, Slider, FamilyMark
+  CodeTag, SectionRule, NumeralPlate, Bar, DefRow, ArchiveGroup, TokenList, Btn, Seg, Slider, PrimaryChallenge, ChallengeFlow, ChallengeSignal, ActiveChallengeStrip, RewardTreasuryPreview, DiamondPassage, ForkableChallengeTemplates, ComposeQuestions, FamilyMark
 });

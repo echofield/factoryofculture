@@ -2,6 +2,7 @@
 
 function StudioScreen({ go, currentTemplateCode, draft, setDraft, onSeal }) {
   const t = window.TEMPLATES.find(x => x.code === currentTemplateCode) || window.TEMPLATES[0];
+  const challenge = PrimaryChallenge({ template: t });
 
   // Initialize draft on template change
   React.useEffect(() => {
@@ -49,6 +50,17 @@ function StudioScreen({ go, currentTemplateCode, draft, setDraft, onSeal }) {
       <div className="studio">
         {/* Form column */}
         <div className="studio-form">
+
+          <SectionRule num="§00" label="Compose the commitment" right="Action before settings" />
+          <div className="form-group compose-start">
+            <ComposeQuestions />
+            <ChallengeSignal challenge={challenge} compact />
+            <ChallengeFlow compact />
+            <div className="help">
+              A fork starts by naming the repeated action. Cadence, roles, and treasury only matter
+              once the proof loop is legible.
+            </div>
+          </div>
 
           <SectionRule num="§·" label="Archetype" right="A shaping shortcut" />
           <div className="form-group" style={{paddingTop:8}}>
@@ -221,6 +233,9 @@ function StudioScreen({ go, currentTemplateCode, draft, setDraft, onSeal }) {
                 <p className="serif-em" style={{fontSize:15, marginTop:14, lineHeight:1.5}}>
                   {t.thesis}
                 </p>
+                <div style={{marginTop:16}}>
+                  <ChallengeSignal challenge={challenge} compact />
+                </div>
               </div>
             </div>
 
@@ -256,6 +271,12 @@ function StudioScreen({ go, currentTemplateCode, draft, setDraft, onSeal }) {
                 </div>
               </div>
             </div>
+
+            <div style={{height:1, background:"var(--rule)", margin:"24px 0"}}></div>
+
+            <div className="code-tag" style={{marginBottom:10}}>Challenge spine · inherited</div>
+            <ChallengeFlow compact />
+            <RewardTreasuryPreview challenge={challenge} template={t} />
 
             <div style={{height:1, background:"var(--rule)", margin:"24px 0"}}></div>
 
