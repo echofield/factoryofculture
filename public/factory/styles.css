@@ -707,11 +707,11 @@ body::after {
   background: var(--paper);
   padding: 40px 32px;
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto;
   gap: 26px;
   cursor: pointer;
   transition: background .14s ease;
-  min-height: 480px;
+  min-height: 380px;
   position: relative;
 }
 .tpl-card:hover {
