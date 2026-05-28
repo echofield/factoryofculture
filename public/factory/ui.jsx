@@ -157,14 +157,14 @@ function ChallengeSignal({ challenge, compact, quiet }) {
       <div className="signal-meta">
         {quiet ? (
           <>
-            <span>{challenge.reliability} reliability impact</span>
-            <span>{proofCount} proof requirements</span>
+            <span>{challenge.reliability} trust gain</span>
+            <span>{proofCount} ways to prove it</span>
           </>
         ) : (
           <>
-            <span>{challenge.stake} stake</span>
-            <span>{challenge.reward} reward</span>
-            <span>{challenge.reliability} reliability</span>
+            <span>{challenge.stake} to join</span>
+            <span>{challenge.reward} earned</span>
+            <span>{challenge.reliability} trust</span>
             <span>{proofCount} proofs</span>
           </>
         )}

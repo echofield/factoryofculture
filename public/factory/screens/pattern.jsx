@@ -56,7 +56,7 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
             <div className="sig">
               <div className="key">Action unit</div>
               <div className="val">{challenge.title}</div>
-              <div className="sub">{challenge.validation} validation · {challenge.reliability} impact</div>
+              <div className="sub">confirmed by {challenge.validation} · {challenge.reliability} trust</div>
             </div>
             <div className="sig">
               <div className="key">Mean reliability</div>

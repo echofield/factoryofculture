@@ -79,8 +79,8 @@ function App() {
   return (
     <>
       <div className="shell">
-        {/* Sidebar — only shown on non-cover routes for the monumental cover effect */}
-        {route !== "cover" && (
+        {/* Sidebar — hidden on cover and archetype for full-bleed editorial moments */}
+        {route !== "cover" && route !== "archetype" && (
           <aside className="sidebar">
             <div className="sidebar-mark" onClick={() => go("cover")} style={{cursor:"pointer"}}>
               <div className="wordmark">Factory<br/>of <span>Culture</span><span style={{color:"var(--accent)"}}>.</span></div>
@@ -120,8 +120,8 @@ function App() {
           </aside>
         )}
 
-        <main className="canvas" style={route === "cover" ? {gridColumn:"1 / -1"} : null}>
-          {route !== "cover" && (
+        <main className="canvas" style={(route === "cover" || route === "archetype") ? {gridColumn:"1 / -1"} : null}>
+          {route !== "cover" && route !== "archetype" && (
             <header className="canvas-header">
               <div className="crumbs">
                 <span>Factory of Culture</span>

@@ -1,92 +1,108 @@
-// Archetype selection — FC·000. The first door.
-// Not "which archetype are you" — "what are you about to do."
-// Clicking a card pre-selects the closest template and opens the Compose flow.
+// Archetype album — one full-viewport phase per archetype.
+// No protocol vocabulary. One decision at a time.
+
+function ArchetypeCard({ arch, onPick }) {
+  return (
+    <div className="archetype-phase">
+      <div className="archetype-phase-top">
+        <span className="archetype-phase-num">{arch.num} · {arch.label}</span>
+        <div className="archetype-phase-spacetime">
+          {arch.spacetimeLabels.map((label, i) => (
+            <span key={i} className="spacetime-chip">{label}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="archetype-phase-body">
+        <p className="archetype-phase-oneliner">"{arch.oneliner}"</p>
+        <div className="archetype-phase-examples">
+          {arch.examples.join(" · ")}
+        </div>
+      </div>
+
+      <div className="archetype-phase-foot">
+        <button className="archetype-phase-cta" onClick={() => onPick(arch)}>
+          <span>{arch.cta}</span>
+          <span className="cta-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function ArchetypeScreen({ go, setCurrentTemplate }) {
+  const archetypes = window.ARCHETYPES;
+  const [idx, setIdx] = React.useState(0);
+  const total = archetypes.length;
+
+  const next = () => setIdx(i => Math.min(i + 1, total - 1));
+  const prev = () => setIdx(i => Math.max(i - 1, 0));
+
+  // Keyboard navigation
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft")  prev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [total]);
+
+  const onPick = (arch) => {
+    setCurrentTemplate(arch.defaultCode);
+    go("compose");
+  };
+
+  const current = archetypes[idx];
+  const isLast = idx === total - 1;
+
   return (
-    <div className="page">
-      <div className="page-head">
-        <div>
-          <CodeTag accent>FC·000 / ARCHETYPES</CodeTag>
-          <h2 style={{marginTop:12}}>What are you building?</h2>
-          <p className="deck">
-            Every recurring group has a shape. Find yours — the system configures itself.
-            You'll never fill out a protocol form.
-          </p>
-        </div>
-        <div className="right">
-          <div className="big">06</div>
-          <div>Kernels</div>
-          <div style={{color:"var(--ink-4)"}}>Pick one · Configure nothing</div>
-        </div>
+    <div className="archetype-album">
+      <div className="archetype-album-top">
+        <span className="album-back" onClick={() => go("cover")}>← Back</span>
+        <span className="album-counter">
+          {String(idx + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+        </span>
       </div>
 
-      <SectionRule num="§00" label="Six shapes" right="Action-first · pick the closest" />
+      <div className="archetype-album-stage">
+        <button
+          className="archetype-nav archetype-nav-prev"
+          onClick={prev}
+          disabled={idx === 0}
+          aria-label="Previous"
+        >‹</button>
 
-      <div className="archetype-grid">
-        {window.ARCHETYPES.map(arch => (
-          <div
-            key={arch.id}
-            className="archetype-card"
-            onClick={() => {
-              setCurrentTemplate(arch.defaultCode);
-              go("compose");
-            }}
-          >
-            {/* Spacetime position — top right, recessed */}
-            <div className="archetype-spacetime">
-              <span className="spacetime-chip">{arch.spacetime.time}</span>
-              <span className="spacetime-chip">{arch.spacetime.space}</span>
-            </div>
+        <ArchetypeCard arch={current} onPick={onPick} />
 
-            {/* Head: num + label */}
-            <div className="archetype-card-head">
-              <span className="archetype-num">{arch.num} ·</span>
-              <span className="archetype-label">{arch.label.replace("The ", "")}</span>
-            </div>
-
-            {/* Hero: the action-framed oneliner */}
-            <p className="archetype-oneliner">"{arch.oneliner}"</p>
-
-            {/* Examples */}
-            <div className="archetype-hint">{arch.hint}</div>
-
-            {/* Foot: signals + CTA */}
-            <div className="archetype-foot">
-              <div className="archetype-signals">
-                <span className="archetype-signal-chip">{arch.governance}</span>
-                <span className="archetype-signal-chip">{arch.proofPrimitive}</span>
-                <span className="archetype-signal-chip">{arch.economicLoop}</span>
-              </div>
-              <div className="archetype-cta">
-                <span>{arch.cta}</span>
-                <span>→</span>
-              </div>
-            </div>
-          </div>
-        ))}
+        <button
+          className="archetype-nav archetype-nav-next"
+          onClick={next}
+          disabled={isLast}
+          aria-label="Next"
+        >›</button>
       </div>
 
-      {/* Escape hatch: one-shot or browse */}
-      <div style={{
-        display:"grid",
-        gridTemplateColumns:"1fr auto",
-        alignItems:"center",
-        gap:24,
-        marginTop:48,
-        paddingTop:24,
-        borderTop:"1px solid var(--rule)"
-      }}>
-        <div>
-          <div className="code-tag" style={{marginBottom:6}}>Not building something recurring?</div>
-          <p className="serif-em" style={{fontSize:14, color:"var(--ink-3)", margin:0, maxWidth:"52ch"}}>
-            You can also just run one event — a tournament, a night, a sprint. No archetype needed.
-            Start with a single card and decide later if it becomes something more.
-          </p>
+      <div className="archetype-album-foot">
+        <div className="album-progress">
+          {archetypes.map((a, i) => (
+            <span
+              key={a.id}
+              className={"album-tick" + (i === idx ? " current" : "") + (i < idx ? " past" : "")}
+              onClick={() => setIdx(i)}
+            />
+          ))}
         </div>
-        <div style={{display:"flex", gap:10, flexShrink:0}}>
-          <Btn onClick={() => go("compose")}>Run one thing →</Btn>
-          <Btn onClick={() => go("library")} arrow>Browse library</Btn>
+
+        <div className="album-oneshot">
+          <p>
+            Not building something recurring? Run one event —
+            a tournament, a night, a sprint. No setup needed.
+          </p>
+          <button className="album-oneshot-cta" onClick={() => go("compose")}>
+            <span>Run one thing</span>
+            <span>→</span>
+          </button>
         </div>
       </div>
     </div>

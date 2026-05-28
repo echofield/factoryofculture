@@ -189,80 +189,62 @@ window.ARCHETYPES = [
   {
     id: "crew",
     num: "01",
-    label: "The Crew",
-    oneliner: "We show up together and we want stakes.",
+    label: "Crew",
+    oneliner: "We show up together. Make it count.",
     cta: "Set up your crew",
-    hint: "basketball · friend group · skate crew · study circle",
-    governance: "equal",
-    proofPrimitive: "attendance",
-    economicLoop: "stake pool",
-    defaultCode: "CC",
-    spacetime: { time: "ongoing", space: "fixed" }
+    examples: ["basketball crew", "friend group", "skate circle"],
+    spacetimeLabels: ["one-shot or season", "fixed"],
+    defaultCode: "CC"
   },
   {
     id: "night",
     num: "02",
-    label: "The Night",
+    label: "Night",
     oneliner: "I run the room. Help me own it.",
     cta: "Set up your night",
-    hint: "party organizer · event series · club night · pop-up",
-    governance: "organizer-led",
-    proofPrimitive: "door count",
-    economicLoop: "door split",
-    defaultCode: "NL",
-    spacetime: { time: "season", space: "nomadic" }
+    examples: ["party night", "event series", "pop-up"],
+    spacetimeLabels: ["season", "nomadic"],
+    defaultCode: "NL"
   },
   {
     id: "collective",
     num: "03",
-    label: "The Collective",
+    label: "Collective",
     oneliner: "We make things together. Make the proof real.",
     cta: "Set up your collective",
-    hint: "music collective · creator guild · sprint group · studio network",
-    governance: "peer validation",
-    proofPrimitive: "output artifact",
-    economicLoop: "contribution share",
-    defaultCode: "CG",
-    spacetime: { time: "ongoing", space: "distributed" }
+    examples: ["music group", "creative sprint", "studio network"],
+    spacetimeLabels: ["ongoing", "distributed"],
+    defaultCode: "CG"
   },
   {
     id: "circle",
     num: "04",
-    label: "The Circle",
+    label: "Circle",
     oneliner: "We keep coming back. Turn that into something.",
     cta: "Set up your circle",
-    hint: "café regulars · gym community · bookstore circle · neighborhood",
-    governance: "place steward",
-    proofPrimitive: "return frequency",
-    economicLoop: "loyalty stake",
-    defaultCode: "PC",
-    spacetime: { time: "ongoing", space: "fixed" }
+    examples: ["café regulars", "gym crew", "local ritual"],
+    spacetimeLabels: ["ongoing", "fixed"],
+    defaultCode: "PC"
   },
   {
     id: "creator",
     num: "05",
-    label: "The Creator",
+    label: "Creator",
     oneliner: "I build the audience. Let them earn their place.",
     cta: "Set up your creator circle",
-    hint: "musician · independent brand · Instagram creator · cultural figure",
-    governance: "creator authority",
-    proofPrimitive: "participation proof",
-    economicLoop: "access tiers",
-    defaultCode: "SC",
-    spacetime: { time: "ongoing", space: "distributed" }
+    examples: ["musician", "independent brand", "cultural figure"],
+    spacetimeLabels: ["ongoing", "distributed"],
+    defaultCode: "SC"
   },
   {
     id: "builder",
     num: "06",
-    label: "The Builder",
+    label: "Builder",
     oneliner: "I see the pattern. Let me seal it.",
     cta: "Start composing",
-    hint: "solo builder · community designer · protocol architect",
-    governance: "sovereign",
-    proofPrimitive: "pattern seal",
-    economicLoop: "fork royalty",
-    defaultCode: "PC",
-    spacetime: { time: "season", space: "distributed" }
+    examples: ["community designer", "protocol architect", "solo builder"],
+    spacetimeLabels: ["any", "any"],
+    defaultCode: "PC"
   }
 ];
 

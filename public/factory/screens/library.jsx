@@ -82,15 +82,15 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
       <SectionRule num="§02" label="How to read a pattern" right="Reading order · 9 keys" />
       <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:30, marginTop:20}}>
         {[
-          ["Thesis", "What the community is and why it recurs."],
-          ["Place logic", "Where the pattern anchors physically."],
-          ["Cadence", "How often the ritual runs and for how long."],
+          ["Thesis", "What the group is and why it keeps happening."],
+          ["Where", "The place the pattern lives."],
+          ["How often", "How often it runs and for how long."],
           ["Roles", "The shapes a member can hold."],
-          ["Challenge signal", "One living action signal inside each species card."],
-          ["Proof flow", "The full flow belongs inside Pattern Detail and Challenge views."],
-          ["Treasury", "How reward and reserve move after validation."],
-          ["Governance", "Who decides what, and how it changes."],
-          ["Onboarding", "How a new member becomes a witness, then a member."]
+          ["Active card", "The one live thing happening inside each pattern right now."],
+          ["How you prove it", "The signals that count as having shown up."],
+          ["How it splits", "How what's earned moves after it's confirmed."],
+          ["Who decides", "How decisions get made and how the rules change."],
+          ["How you join", "How a new person becomes part of the group."]
         ].map(([k,v]) => (
           <div key={k} style={{borderTop:"1px solid var(--rule)", paddingTop:14}}>
             <div style={{fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:"0.16em", textTransform:"uppercase", color:"var(--accent)", marginBottom:6}}>{k}</div>

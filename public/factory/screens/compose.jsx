@@ -1,61 +1,69 @@
-// Compose a Pattern — FC·010/00. Walk the 5 kernel questions as steps.
-// State is local only — SEAL action is stubbed (TODO: wire to backend when ready).
+// Compose — 5 steps, plain language, no protocol vocabulary.
+// One question per breath. Live card on the right fills in as you answer.
 
 const COMPOSE_STEPS = [
   {
-    id: "action",
+    id: "name",
     num: "01",
-    question: "What does this community repeatedly do?",
-    hint: "Name the ritual, practice, or commitment. This becomes the challenge title.",
+    question: "What's the name?",
+    hint: "A night, a crew, a circle. Whatever it is.",
     type: "text",
-    placeholder: "e.g. gather every Wednesday to write together"
+    placeholder: "Sunday Suppers · The Warehouse · Tuesday Practice"
   },
   {
-    id: "proof",
+    id: "where",
     num: "02",
-    question: "What proves it happened?",
-    hint: "Specify one to three artifacts or signals. Proof must be witnessable by someone else.",
-    type: "text",
-    placeholder: "e.g. attendance log, shared artifact, peer sign-off"
+    question: "Where does it live?",
+    hint: "A place, a city, or anywhere.",
+    type: "chips+text",
+    options: [
+      { value: "venue",  label: "A venue" },
+      { value: "cafe",   label: "A café or bar" },
+      { value: "online", label: "Online" },
+      { value: "moves",  label: "Moves around" }
+    ],
+    placeholder: "city (optional)"
   },
   {
-    id: "validation",
+    id: "frequency",
     num: "03",
-    question: "Who validates it?",
-    hint: "The validator is the trust mechanism. A pattern is only as reliable as its validator.",
+    question: "How often does it happen?",
+    hint: "",
     type: "chips",
     options: [
-      { value: "witness",    label: "Witness" },
-      { value: "peer-vote",  label: "Peer vote" },
-      { value: "steward",    label: "Steward" },
-      { value: "self",       label: "Self-reported" }
+      { value: "once",     label: "Once" },
+      { value: "weekly",   label: "Weekly" },
+      { value: "monthly",  label: "Monthly" },
+      { value: "season",   label: "Each season" },
+      { value: "whenever", label: "Whenever" }
     ]
   },
   {
-    id: "reward",
+    id: "proof",
     num: "04",
-    question: "What is rewarded?",
-    hint: "Keep rewards proportional to the action. Overcapitalization weakens the social contract.",
-    type: "chips+text",
+    question: "What proves someone was really there?",
+    hint: "Pick whatever fits. You can choose more than one.",
+    type: "chips-multi",
     options: [
-      { value: "status",  label: "Status credit" },
-      { value: "access",  label: "Access rights" },
-      { value: "share",   label: "Revenue share" },
-      { value: "carry",   label: "Season carry-over" }
-    ],
-    placeholder: "e.g. 50 SYM per validated cycle"
+      { value: "checkin",     label: "They checked in" },
+      { value: "contributed", label: "They contributed something" },
+      { value: "witnessed",   label: "Someone witnessed it" },
+      { value: "challenge",   label: "They completed a challenge" },
+      { value: "organizer",   label: "The organizer confirms" }
+    ]
   },
   {
-    id: "forkability",
+    id: "earn",
     num: "05",
-    question: "What can be forked?",
-    hint: "Forkability determines how the pattern propagates. Open patterns spread faster; paid patterns sustain the author.",
-    type: "chips",
+    question: "What do people get for showing up?",
+    hint: "Pick whatever fits. You can choose more than one.",
+    type: "chips-multi",
     options: [
-      { value: "open",   label: "Open fork" },
-      { value: "paid",   label: "Paid fork" },
-      { value: "invite", label: "Invite only" },
-      { value: "closed", label: "Closed" }
+      { value: "access",  label: "Access to the next one" },
+      { value: "share",   label: "A share of what we earn" },
+      { value: "status",  label: "Status in the group" },
+      { value: "invite",  label: "An invitation right" },
+      { value: "record",  label: "Nothing yet — just the record" }
     ]
   }
 ];
@@ -63,12 +71,12 @@ const COMPOSE_STEPS = [
 function ComposeScreen({ go }) {
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState({
-    action: "",
-    proof: "",
-    validation: "witness",
-    reward: "status",
-    rewardNote: "",
-    forkability: "open"
+    name: "",
+    whereType: "",
+    whereCity: "",
+    frequency: "",
+    proof: [],
+    earn: []
   });
 
   const current = COMPOSE_STEPS[step];
@@ -77,28 +85,45 @@ function ComposeScreen({ go }) {
 
   const setAnswer = (key, val) => setAnswers(prev => ({ ...prev, [key]: val }));
 
-  // Derive a working name from the action answer
-  const previewName = answers.action
-    ? answers.action.split(" ").slice(0, 5).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-    : null;
+  const toggleMulti = (key, val) => {
+    setAnswers(prev => {
+      const list = prev[key] || [];
+      return {
+        ...prev,
+        [key]: list.includes(val) ? list.filter(v => v !== val) : [...list, val]
+      };
+    });
+  };
 
+  const previewName = answers.name || null;
   const filled = COMPOSE_STEPS.filter(s => {
-    const v = answers[s.id];
-    return v && String(v).trim().length > 0;
+    if (s.id === "name")      return !!answers.name;
+    if (s.id === "where")     return !!answers.whereType || !!answers.whereCity;
+    if (s.id === "frequency") return !!answers.frequency;
+    if (s.id === "proof")     return answers.proof.length > 0;
+    if (s.id === "earn")      return answers.earn.length > 0;
+    return false;
   }).length;
+
+  // Plain-language readback for the preview card
+  const labelOf = (stepId, val) => {
+    const s = COMPOSE_STEPS.find(x => x.id === stepId);
+    const opt = s?.options?.find(o => o.value === val);
+    return opt ? opt.label : val;
+  };
 
   return (
     <div className="page">
       <div className="page-head">
         <div>
-          <CodeTag accent>FC·010 / COMPOSE</CodeTag>
-          <h2 style={{marginTop:10}}>Compose a Pattern</h2>
+          <CodeTag accent>FC·010 / NEW</CodeTag>
+          <h2 style={{marginTop:10}}>Set it up.</h2>
           <p className="deck">
-            Answer five structural questions. The pattern crystallises as you write.
+            Five questions. Plain words. The card fills in as you answer.
           </p>
         </div>
         <div style={{display:"flex", gap:10}}>
-          <Btn onClick={() => go("library")}>← Library</Btn>
+          <Btn onClick={() => go("archetype")}>← Back</Btn>
         </div>
       </div>
 
@@ -109,7 +134,12 @@ function ComposeScreen({ go }) {
 
           <div className="compose-stepper">
             {COMPOSE_STEPS.map((s, i) => {
-              const isDone = answers[s.id] && String(answers[s.id]).trim().length > 0;
+              const isDone =
+                s.id === "name"      ? !!answers.name :
+                s.id === "where"     ? (!!answers.whereType || !!answers.whereCity) :
+                s.id === "frequency" ? !!answers.frequency :
+                s.id === "proof"     ? answers.proof.length > 0 :
+                s.id === "earn"      ? answers.earn.length > 0 : false;
               return (
                 <div
                   key={s.id}
@@ -126,15 +156,16 @@ function ComposeScreen({ go }) {
           <div className="compose-question-block">
             <div className="compose-question-num">{current.num} / 05</div>
             <h3 className="compose-question-text">{current.question}</h3>
-            <p className="compose-question-hint">{current.hint}</p>
+            {current.hint && <p className="compose-question-hint">{current.hint}</p>}
 
             {current.type === "text" && (
-              <textarea
-                className="compose-input"
+              <input
+                className="compose-input-inline"
+                style={{fontFamily:"var(--font-serif)", fontSize:18, fontStyle:"italic", padding:"16px 18px"}}
                 placeholder={current.placeholder}
-                value={answers[current.id] || ""}
-                onChange={e => setAnswer(current.id, e.target.value)}
-                rows={3}
+                value={answers.name || ""}
+                onChange={e => setAnswer("name", e.target.value)}
+                autoFocus
               />
             )}
 
@@ -152,14 +183,31 @@ function ComposeScreen({ go }) {
               </div>
             )}
 
+            {current.type === "chips-multi" && (
+              <div className="compose-chips">
+                {current.options.map(opt => {
+                  const selected = (answers[current.id] || []).includes(opt.value);
+                  return (
+                    <button
+                      key={opt.value}
+                      className={"compose-chip" + (selected ? " selected" : "")}
+                      onClick={() => toggleMulti(current.id, opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             {current.type === "chips+text" && (
               <>
                 <div className="compose-chips">
                   {current.options.map(opt => (
                     <button
                       key={opt.value}
-                      className={"compose-chip" + (answers[current.id] === opt.value ? " selected" : "")}
-                      onClick={() => setAnswer(current.id, opt.value)}
+                      className={"compose-chip" + (answers.whereType === opt.value ? " selected" : "")}
+                      onClick={() => setAnswer("whereType", opt.value)}
                     >
                       {opt.label}
                     </button>
@@ -167,10 +215,10 @@ function ComposeScreen({ go }) {
                 </div>
                 <input
                   className="compose-input-inline"
-                  style={{marginTop:12}}
+                  style={{marginTop:14}}
                   placeholder={current.placeholder}
-                  value={answers.rewardNote || ""}
-                  onChange={e => setAnswer("rewardNote", e.target.value)}
+                  value={answers.whereCity || ""}
+                  onChange={e => setAnswer("whereCity", e.target.value)}
                 />
               </>
             )}
@@ -180,29 +228,34 @@ function ComposeScreen({ go }) {
                 <Btn onClick={() => setStep(step - 1)}>← Back</Btn>
               )}
               {!isLast ? (
-                <Btn primary onClick={() => setStep(step + 1)} arrow>Next step</Btn>
+                <Btn primary onClick={() => setStep(step + 1)} arrow>Next</Btn>
               ) : (
                 <>
+                  <Btn onClick={() => go("library")}>Save as draft</Btn>
                   <Btn primary onClick={() => {
-                    // TODO: wire to backend — seal the composed pattern
+                    // TODO: wire to backend — seal the composed card
                     go("library");
-                  }} arrow>
-                    Seal pattern
-                  </Btn>
-                  <span className="code-tag" style={{color:"var(--ink-5)"}}>local draft · no backend yet</span>
+                  }} arrow>Seal it</Btn>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        {/* Right: live sealed preview — fills as you answer */}
+        {/* Right: live card preview */}
         <div className="compose-preview-col">
-          <SectionRule num="§·" label="Pattern forming" right={filled + " / 5 answered"} />
+          <div style={{
+            fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:"0.18em",
+            textTransform:"uppercase", color:"var(--ink-4)", marginBottom:18,
+            display:"flex", justifyContent:"space-between"
+          }}>
+            <span>Your card</span>
+            <span style={{color:"var(--accent)"}}>{filled} / 5 answered</span>
+          </div>
 
           <div className="compose-preview-card">
             <div className="compose-preview-badge">
-              {previewName ? "COMPOSING" : "APERTURE"} · FC·NEW
+              {previewName ? "DRAFT" : "EMPTY"}
             </div>
 
             <div style={{display:"grid", gridTemplateColumns:"100px 1fr", gap:20, alignItems:"start"}}>
@@ -214,69 +267,70 @@ function ComposeScreen({ go }) {
                 br={"draft"}
               />
               <div>
-                <div className="code-tag accent" style={{marginBottom:4}}>FC·NEW · DRAFT</div>
+                <div className="code-tag accent" style={{marginBottom:4}}>FC·NEW</div>
                 {previewName ? (
                   <h3 className="compose-preview-name">{previewName}</h3>
                 ) : (
-                  <div className="compose-preview-name" style={{color:"var(--ink-5)", fontStyle:"italic", fontFamily:"var(--font-serif)", fontWeight:400, fontSize:18}}>
-                    Unnamed pattern
+                  <div style={{color:"var(--ink-5)", fontStyle:"italic", fontFamily:"var(--font-serif)", fontWeight:400, fontSize:18, marginTop:6}}>
+                    Name your thing
                   </div>
                 )}
-                {answers.action && (
+                {(answers.whereType || answers.whereCity) && (
                   <p className="serif-em" style={{fontSize:13.5, marginTop:10, lineHeight:1.5}}>
-                    {answers.action}
+                    {labelOf("where", answers.whereType)}{answers.whereCity ? " · " + answers.whereCity : ""}
                   </p>
                 )}
               </div>
             </div>
 
-            {(answers.proof || answers.validation !== "witness") && (
-              <>
-                <div className="compose-preview-divider" />
-                {answers.validation && (
-                  <div className="compose-preview-row">
-                    <span className="code-tag">Validation</span>
-                    <span style={{fontSize:13}}>{answers.validation}</span>
-                  </div>
-                )}
-                {answers.proof && (
-                  <div className="compose-preview-row">
-                    <span className="code-tag">Proof</span>
-                    <span style={{fontSize:13, color:"var(--ink-2)"}}>{answers.proof}</span>
-                  </div>
-                )}
-              </>
-            )}
-
-            {(answers.rewardNote || answers.reward !== "status") && (
+            {answers.frequency && (
               <>
                 <div className="compose-preview-divider" />
                 <div className="compose-preview-row">
-                  <span className="code-tag">Reward</span>
-                  <span style={{fontSize:13}}>{answers.reward}{answers.rewardNote ? " · " + answers.rewardNote : ""}</span>
+                  <span className="code-tag">How often</span>
+                  <span style={{fontSize:13.5}}>{labelOf("frequency", answers.frequency)}</span>
                 </div>
               </>
             )}
 
-            {answers.forkability !== "open" && (
+            {answers.proof.length > 0 && (
               <>
                 <div className="compose-preview-divider" />
                 <div className="compose-preview-row">
-                  <span className="code-tag">Fork</span>
-                  <span style={{fontSize:13}}>{answers.forkability}</span>
+                  <span className="code-tag">Proves it</span>
+                  <span style={{fontSize:13.5, color:"var(--ink-2)"}}>
+                    {answers.proof.map(v => labelOf("proof", v)).join(" · ")}
+                  </span>
+                </div>
+              </>
+            )}
+
+            {answers.earn.length > 0 && (
+              <>
+                <div className="compose-preview-divider" />
+                <div className="compose-preview-row">
+                  <span className="code-tag">They earn</span>
+                  <span style={{fontSize:13.5, color:"var(--ink-2)"}}>
+                    {answers.earn.map(v => labelOf("earn", v)).join(" · ")}
+                  </span>
                 </div>
               </>
             )}
 
             {!previewName && (
               <div className="compose-empty-hint">
-                Answer question 01 and the pattern<br/>begins to take shape here.
+                Answer the first question<br/>and the card begins to take shape.
               </div>
             )}
 
             <div className="compose-progress">
               {COMPOSE_STEPS.map((s, i) => {
-                const isDone = answers[s.id] && String(answers[s.id]).trim().length > 0;
+                const isDone =
+                  s.id === "name"      ? !!answers.name :
+                  s.id === "where"     ? (!!answers.whereType || !!answers.whereCity) :
+                  s.id === "frequency" ? !!answers.frequency :
+                  s.id === "proof"     ? answers.proof.length > 0 :
+                  s.id === "earn"      ? answers.earn.length > 0 : false;
                 return (
                   <div
                     key={s.id}
