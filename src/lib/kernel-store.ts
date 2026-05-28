@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import os from "os";
 import path from "path";
 import type {
   ArchitectureLicenseType,
@@ -25,7 +26,10 @@ import type {
   User
 } from "./kernel-types";
 
-const dataPath = path.join(process.cwd(), "data", "kernel.json");
+const bundledDataPath = path.join(process.cwd(), "data", "kernel.json");
+const dataPath = process.env.VERCEL
+  ? path.join(os.tmpdir(), "factory-of-culture-kernel", "kernel.json")
+  : bundledDataPath;
 
 const emptyState: KernelState = {
   users: [],
@@ -318,7 +322,13 @@ async function ensureDataFile() {
   try {
     await fs.access(dataPath);
   } catch {
-    await fs.writeFile(dataPath, `${JSON.stringify(emptyState, null, 2)}\n`, "utf8");
+    let seed = emptyState;
+    try {
+      seed = JSON.parse(await fs.readFile(bundledDataPath, "utf8")) as KernelState;
+    } catch {
+      seed = emptyState;
+    }
+    await fs.writeFile(dataPath, `${JSON.stringify(seed, null, 2)}\n`, "utf8");
   }
 }
 
