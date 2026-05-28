@@ -24,7 +24,7 @@ function App() {
   // Hash route
   const [route, setRoute] = React.useState(() => {
     const h = (window.location.hash || "").replace("#","");
-    return ROUTES.find(r => r.key === h) ? h : "archetype";
+    return ROUTES.find(r => r.key === h) ? h : "cover";
   });
   const go = (k) => {
     setRoute(k);

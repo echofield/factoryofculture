@@ -59,9 +59,15 @@ function AlmanacCover({ go, currentTemplate, instance }) {
             Commitment → Proof → Validation → Reward → Memory
           </div>
         </div>
-        <div className="enter" onClick={() => go("library")}>
-          <span>Enter the Library</span>
-          <span className="arrow">→</span>
+        <div style={{display:"grid", gap:14, justifyItems:"end"}}>
+          <div className="enter" onClick={() => go("archetype")}>
+            <span>Find your shape</span>
+            <span className="arrow">→</span>
+          </div>
+          <div className="enter" style={{color:"var(--ink-4)", fontSize:11}} onClick={() => go("library")}>
+            <span>Enter the Library</span>
+            <span className="arrow" style={{fontSize:14}}>→</span>
+          </div>
         </div>
       </div>
     </div>
