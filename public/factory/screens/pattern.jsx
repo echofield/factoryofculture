@@ -21,12 +21,15 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
       </div>
 
       <div className="spread">
+        {/* ── SPREAD LEFT ── */}
         <div className="spread-left">
+
+          {/* LAYER 1: Identity — numeral, title, thesis, 4 key facts */}
           <div className="pattern-hero">
             <NumeralPlate
               size="huge"
               style={{aspectRatio:"1"}}
-              glyph={<>{t.glyph.replace(".","")}<span className="dot">.</span></>}
+              glyph={<>{t.glyph.replace(".","")}<StatusDot /></>}
               tl={t.catalog}
               tr={t.code}
               bl={"PATTERN"}
@@ -39,7 +42,6 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
             </div>
           </div>
 
-          {/* Primary signals — the 15-second read */}
           <div className="primary-signals">
             <div className="sig">
               <div className="key">Cadence</div>
@@ -63,28 +65,15 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
             </div>
           </div>
 
+          {/* LAYER 2: Single canonical spine */}
           <SectionRule num="§00" label="Action Spine" right="Challenge is the economic unit" />
-          <ActiveChallengeStrip template={t} />
-          <div className="action-spine-grid">
-            <div className="spine-panel main">
-              <div className="code-tag accent">Proof flow</div>
-              <ChallengeFlow />
-              <div className="spine-proof-list">
-                {challenge.proof.map((item, i) => (
-                  <div key={item}>
-                    <span>{String(i + 1).padStart(2, "0")}</span>
-                    <strong>{item}</strong>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <RewardTreasuryPreview challenge={challenge} template={t} />
-          </div>
+          <ActionSpine challenge={challenge} template={t} />
           <DiamondPassage template={t} />
 
           <SectionRule num="§00B" label="Forkable challenge templates" right={t.challengeTemplates.length + " inherited modules"} />
           <ForkableChallengeTemplates template={t} />
 
+          {/* Secondary: operating shape */}
           <SectionRule num="§01" label="Operating Shape" right="What recurs" />
           <div className="def-list">
             <DefRow k="Roles">
@@ -118,9 +107,11 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
           </ArchiveGroup>
         </div>
 
+        {/* ── SPREAD RIGHT — LAYER 3: archive / reference ── */}
         <div className="spread-right">
-          <div>
-            <SectionRule num="§02" label="Sealed Editions" right={t.sealed.length + " · live"} />
+
+          {/* §02 Sealed editions — collapsible archive */}
+          <ArchiveGroup num="§02" label="Sealed Editions" right={t.sealed.length + " · live"} defaultOpen>
             <div className="instances">
               {t.sealed.map(s => (
                 <div key={s.id} className="instance-row" onClick={() => go("kernel")}>
@@ -136,10 +127,10 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
                 </div>
               ))}
             </div>
-          </div>
+          </ArchiveGroup>
 
-          <div>
-            <SectionRule num="§03" label="Proof of Architecture" right="Aggregated" />
+          {/* §03 Proof stats — quiet reference block */}
+          <ArchiveGroup num="§03" label="Proof of Architecture" right="Aggregated" defaultOpen>
             <div style={{display:"grid", gridTemplateColumns:"repeat(2, 1fr)", gap:1, background:"var(--rule)", border:"1px solid var(--rule)"}}>
               {[
                 ["Mean reliability", (t.sealed.reduce((a,b)=>a+b.reliability,0)/t.sealed.length*100).toFixed(0)+"%"],
@@ -147,13 +138,13 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
                 ["Cycles run", t.sealed.length * (Math.floor(Math.random()*5)+3)],
                 ["Mean price", t.sealed.filter(s=>s.price!=="free").length ? "$" + Math.round(t.sealed.filter(s=>s.price!=="free").reduce((a,b)=>a+Number(b.price.replace("$","")),0)/t.sealed.filter(s=>s.price!=="free").length) : "free"]
               ].map(([k,v]) => (
-                <div key={k} style={{background:"var(--paper)", padding:"16px 18px"}}>
-                  <div style={{fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:"0.16em", textTransform:"uppercase", color:"var(--ink-4)"}}>{k}</div>
-                  <div style={{fontFamily:"var(--font-display)", fontSize:24, fontWeight:600, letterSpacing:"-0.02em", marginTop:4}}>{v}</div>
+                <div key={k} style={{background:"var(--paper)", padding:"14px 16px"}}>
+                  <div style={{fontFamily:"var(--font-mono)", fontSize:9.5, letterSpacing:"0.16em", textTransform:"uppercase", color:"var(--ink-5)"}}>{k}</div>
+                  <div style={{fontFamily:"var(--font-display)", fontSize:16, fontWeight:500, letterSpacing:"-0.02em", marginTop:4, color:"var(--ink-3)"}}>{v}</div>
                 </div>
               ))}
             </div>
-          </div>
+          </ArchiveGroup>
 
           <ArchiveGroup num="§04" label="Failure Notes · Adjustments shipped" right={window.FAILURE_LOG.filter(f => f.code.startsWith(t.code)).length + " · logged"}>
             <div style={{display:"grid", gap:0}}>

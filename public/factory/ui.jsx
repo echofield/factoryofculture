@@ -274,6 +274,51 @@ function ComposeQuestions() {
   );
 }
 
+function ActionSpine({ challenge, template }) {
+  const nodes = [
+    { id: "commitment", label: "Commitment", annot: challenge.stake,          annotKey: "stake" },
+    { id: "attendance", label: "Attendance", annot: null },
+    { id: "proof",      label: "Proof",      annot: null },
+    { id: "validation", label: "Validation", annot: challenge.reliability,    annotKey: "impact" },
+    { id: "reward",     label: "Reward",     annot: challenge.reward,         annotKey: "earned" },
+    { id: "trace",      label: "Trace",      annot: template.treasury.model,  annotKey: "treasury" },
+  ];
+  const activeId = "proof";
+
+  return (
+    <div className="action-spine">
+      <div className="action-spine-nodes">
+        {nodes.map((node) => (
+          <div key={node.id} className={"spine-node" + (node.id === activeId ? " active" : "")}>
+            <div className="spine-node-label">{node.label}</div>
+            {node.annot && (
+              <div className="spine-node-annot">
+                <span className="annot-key">{node.annotKey}</span>
+                <span className="annot-val">{node.annot}</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="action-spine-proof">
+        <div className="action-spine-proof-label">Proof steps</div>
+        <div className="action-spine-proof-list">
+          {challenge.proof.map((item, i) => (
+            <div key={item} className="proof-step">
+              <span className="proof-step-num">{String(i + 1).padStart(2, "0")}</span>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatusDot() {
+  return <span className="status-dot">.</span>;
+}
+
 function FamilyMark({ family }) {
   // Returns a tiny glyph mark used in the lineage / marketplace rows. Each family gets a different mark.
   const marks = {
@@ -283,5 +328,5 @@ function FamilyMark({ family }) {
 }
 
 Object.assign(window, {
-  CodeTag, SectionRule, NumeralPlate, Bar, DefRow, ArchiveGroup, TokenList, Btn, Seg, Slider, PrimaryChallenge, ChallengeFlow, ChallengeSignal, ActiveChallengeStrip, RewardTreasuryPreview, DiamondPassage, ForkableChallengeTemplates, ComposeQuestions, FamilyMark
+  CodeTag, SectionRule, NumeralPlate, Bar, DefRow, ArchiveGroup, TokenList, Btn, Seg, Slider, PrimaryChallenge, ChallengeFlow, ChallengeSignal, ActiveChallengeStrip, RewardTreasuryPreview, DiamondPassage, ForkableChallengeTemplates, ComposeQuestions, FamilyMark, StatusDot, ActionSpine
 });

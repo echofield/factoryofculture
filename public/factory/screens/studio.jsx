@@ -222,7 +222,7 @@ function StudioScreen({ go, currentTemplateCode, draft, setDraft, onSeal }) {
               <NumeralPlate
                 size="med"
                 style={{width:120, height:120, aspectRatio:"1"}}
-                glyph={<>{t.glyph.replace(".","")}<span className="dot">.</span></>}
+                glyph={<>{t.glyph.replace(".","")}<StatusDot /></>}
                 tl={t.code}
                 br={"v1.0"}
               />

@@ -24,14 +24,14 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
       <SectionRule num="§01" label="Pattern Index" right="Field guide · Species first" />
 
       <div className="tpl-grid">
-        <div className="tpl-card proposed">
+        <div className="tpl-card proposed" onClick={() => go("compose")}>
           <div className="head">
             <span className="code">FC·010 · DRAFT</span>
             <span className="family">COMPOSE</span>
           </div>
           <div>
             <div className="numeral">
-              00<span className="dot">.</span>
+              00<StatusDot />
             </div>
             <div className="name">Compose a Pattern</div>
             <p className="thesis">
@@ -42,7 +42,7 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
           </div>
           <div className="foot">
             <span>Draft aperture</span>
-            <span style={{textAlign:"right"}}>Compose →</span>
+            <span style={{textAlign:"right", color:"var(--accent)"}}>Open →</span>
           </div>
         </div>
 
@@ -62,7 +62,7 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
               </div>
               <div>
                 <div className="numeral">
-                  {displayNumber}<span className="dot">.</span>
+                  {displayNumber}<StatusDot />
                 </div>
                 <div className="name">{t.name}</div>
                 <p className="thesis">{t.thesis}</p>
@@ -80,7 +80,7 @@ function LibraryScreen({ go, setCurrentTemplate, currentTemplateCode }) {
       </div>
 
       <SectionRule num="§02" label="How to read a pattern" right="Reading order · 9 keys" />
-      <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:24, marginTop:8}}>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:30, marginTop:20}}>
         {[
           ["Thesis", "What the community is and why it recurs."],
           ["Place logic", "Where the pattern anchors physically."],

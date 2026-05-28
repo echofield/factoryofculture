@@ -3,6 +3,7 @@
 const ROUTES = [
   { key: "cover",       catalog: "FC·001", label: "Almanac",          right: "Cover" },
   { key: "library",     catalog: "FC·010", label: "Architecture Library", right: "05 patterns" },
+  { key: "compose",     catalog: "FC·010", label: "Compose · New",    right: "Draft" },
   { key: "pattern",     catalog: "FC·020", label: "Pattern Detail",   right: "PC-031" },
   { key: "studio",      catalog: "FC·030", label: "Studio · Customize", right: "Draft" },
   { key: "kernel",      catalog: "FC·040", label: "Kernel · Live",    right: "Running" },
@@ -141,6 +142,7 @@ function App() {
           <div className="canvas-body">
             {route === "cover"       && <AlmanacCover go={go} currentTemplate={currentTemplateCode} instance={liveInstance} />}
             {route === "library"     && <LibraryScreen go={go} setCurrentTemplate={setCurrentTemplate} currentTemplateCode={currentTemplateCode} />}
+            {route === "compose"     && <ComposeScreen go={go} />}
             {route === "pattern"     && <PatternScreen go={go} currentTemplateCode={currentTemplateCode} setCurrentTemplate={setCurrentTemplate} onFork={onFork} />}
             {route === "studio"      && <StudioScreen go={go} currentTemplateCode={currentTemplateCode} draft={draft} setDraft={setDraft} onSeal={onSeal} />}
             {route === "kernel"      && <KernelScreen go={go} />}
