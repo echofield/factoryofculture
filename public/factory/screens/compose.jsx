@@ -209,7 +209,7 @@ function ComposeScreen({ go }) {
               <NumeralPlate
                 size="med"
                 style={{width:100, height:100, aspectRatio:"1"}}
-                glyph={<>00<StatusDot /></>}
+                glyph={<>00</>}
                 tl={"NEW"}
                 br={"draft"}
               />

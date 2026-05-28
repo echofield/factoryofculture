@@ -29,7 +29,7 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
             <NumeralPlate
               size="huge"
               style={{aspectRatio:"1"}}
-              glyph={<>{t.glyph.replace(".","")}<StatusDot /></>}
+              glyph={<>{t.glyph.replace(".","")}</>}
               tl={t.catalog}
               tr={t.code}
               bl={"PATTERN"}

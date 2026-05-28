@@ -338,7 +338,7 @@ body::after {
   font-size: 72px;
 }
 .numeral-plate .glyph {
-  line-height: 1;
+  line-height: 0.85;
 }
 .numeral-plate .glyph .dot { color: var(--accent); }
 .numeral-plate .corner {
