@@ -1,6 +1,7 @@
 import { architectureTemplates, getKernelPulse } from "./kernel-store";
 import type {
   ArchitectureTemplate,
+  ChallengeTemplate,
   KernelState,
   OperationalPattern,
   PatternFork,
@@ -26,6 +27,8 @@ type SpeciesCard = {
     value: string;
     intensity: "low" | "medium" | "high";
   };
+  challengeTemplates: ChallengeTemplate[];
+  challengeSpine: string[];
 };
 
 type MarketplaceEdition = {
@@ -75,7 +78,21 @@ export function buildFactoryFrontendState(state: KernelState) {
     doctrine: {
       frame: "living field guide of social architectures",
       designLaw: "The index is calm; life appears as punctual signals.",
-      backendLaw: "The kernel records life as events; the frontend reveals it as vital signs."
+      backendLaw: "The kernel records life as events; the frontend reveals it as vital signs.",
+      economicLaw: "Challenge is the universal action unit inside every pattern.",
+      chain: [
+        "Pattern",
+        "Ritual",
+        "Challenge",
+        "Attendance",
+        "Proof",
+        "Validation",
+        "Reward",
+        "Treasury",
+        "Trace",
+        "Fitness",
+        "Fork"
+      ]
     },
     species: [...templateSpecies, ...livingSpecies],
     pulse,
@@ -90,6 +107,16 @@ export function buildFactoryFrontendState(state: KernelState) {
       description: "A pattern-shaped opening for a new operating form after one full cycle and proof of recurrence.",
       witnessCount: state.pulseEvents.filter((pulseEvent) => pulseEvent.type === "proposal_forming").length,
       draftState: state.patterns.some((pattern) => pattern.status === "forming") ? "drafts circulating" : "waiting for form"
+    },
+    challenges: {
+      templates: architectureTemplates.flatMap((template) => template.challengeTemplates),
+      active: state.challenges.filter((challenge) => challenge.status !== "sealed"),
+      history: state.challenges.map((challenge) => ({
+        challenge,
+        proofs: state.proofs.filter((proof) => proof.challengeId === challenge.id),
+        rewards: state.rewards.filter((reward) => reward.challengeId === challenge.id),
+        transactions: state.transactions.filter((transaction) => transaction.challengeId === challenge.id)
+      }))
     }
   };
 }
@@ -114,11 +141,14 @@ function speciesFromTemplate(template: ArchitectureTemplate): SpeciesCard {
       label: template.currentCycleState,
       value: `${template.populationCount} sealed / ${template.forkCount} forks`,
       intensity
-    }
+    },
+    challengeTemplates: template.challengeTemplates,
+    challengeSpine: template.challengeTemplates.map((challenge) => `${challenge.title}: ${challenge.validationMode} validation, ${challenge.rewardAmount} SYM reward`)
   };
 }
 
 function speciesFromPattern(pattern: OperationalPattern): SpeciesCard {
+  const challengeTemplates = pattern.challengeTemplates ?? [];
   return {
     id: pattern.id,
     code: pattern.templateId ? templateCodeMap[pattern.templateId] || "FOC" : "FOC",
@@ -137,7 +167,9 @@ function speciesFromPattern(pattern: OperationalPattern): SpeciesCard {
       label: pattern.currentCycleState,
       value: `${Math.round(pattern.fitnessScore * 100)}% fitness`,
       intensity: pattern.fitnessScore >= 0.88 ? "high" : pattern.fitnessScore >= 0.72 ? "medium" : "low"
-    }
+    },
+    challengeTemplates,
+    challengeSpine: challengeTemplates.map((challenge) => `${challenge.title}: ${challenge.validationMode} validation, ${challenge.rewardAmount} SYM reward`)
   };
 }
 

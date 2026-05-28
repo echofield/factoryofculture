@@ -38,7 +38,7 @@ function KernelScreen({ go }) {
         <div className="kpi">
           <div className="key">Resolution · Challenges</div>
           <div className="val">{(i.resolutionRate*100).toFixed(0)}%</div>
-          <div className="sub">{i.challenges.filter(c=>c.status==="closed").length} closed · {i.challenges.filter(c=>c.status==="open").length} open</div>
+          <div className="sub">{i.challenges.filter(c=>["resolved","rewarded","sealed"].includes(c.status)).length} resolved · {i.challenges.filter(c=>["draft","active","proof_submitted","validating"].includes(c.status)).length} active</div>
         </div>
         <div className="kpi">
           <div className="key">Treasury</div>
@@ -59,7 +59,7 @@ function KernelScreen({ go }) {
             <div className="title">
               <span className="num">§01</span>
               <span className="name">Trace · Recent</span>
-              <span className="right">Commitment → Proof → Validation → Reward</span>
+              <span className="right">Commitment → Proof → Validation → Reward → Trace</span>
             </div>
             <div>
               {i.traces.map((tr, k) => (
@@ -67,10 +67,10 @@ function KernelScreen({ go }) {
                   <div className="ts">{tr.ts}</div>
                   <div className="body">
                     <div className="chain">
-                      {["commitment","proof","validation","reward"].map((step, idx) => (
+                      {["commitment","proof","validation","reward","trace"].map((step, idx) => (
                         <React.Fragment key={step}>
                           <span className={"step" + (tr.chain.includes(step) ? " done" : "")}>{step}</span>
-                          {idx < 3 && <span className="arrow">→</span>}
+                          {idx < 4 && <span className="arrow">→</span>}
                         </React.Fragment>
                       ))}
                     </div>
@@ -113,7 +113,7 @@ function KernelScreen({ go }) {
             <div className="title">
               <span className="num">§03</span>
               <span className="name">Challenges</span>
-              <span className="right">{i.challenges.filter(c=>c.status==="open").length} open</span>
+              <span className="right">{i.challenges.filter(c=>["draft","active","proof_submitted","validating"].includes(c.status)).length} active</span>
             </div>
             <div style={{display:"grid", gap:0}}>
               {i.challenges.map((c, k) => (
@@ -122,10 +122,13 @@ function KernelScreen({ go }) {
                   <div>
                     <div style={{fontSize:14}}>{c.title}</div>
                     <div className="code-tag" style={{marginTop:2}}>
-                      {c.status === "open" ? `${c.participants} committed · due ${c.deadline}` : `${c.completed}/${c.participants} completed · sealed`}
+                      {["draft","active","proof_submitted","validating"].includes(c.status)
+                        ? `${c.participants} committed · due ${c.deadline} · ${c.stake} stake`
+                        : `${c.completed}/${c.participants} completed · ${c.reward} · reliability ${c.reliability}`}
                     </div>
+                    <div className="code-tag" style={{marginTop:4}}>validation · {c.validation}</div>
                   </div>
-                  <div className={"code-tag" + (c.status==="open" ? " accent" : "")}>{c.status === "open" ? "● Open" : "○ Closed"}</div>
+                  <div className={"code-tag" + (["draft","active","proof_submitted","validating"].includes(c.status) ? " accent" : "")}>{c.status}</div>
                 </div>
               ))}
             </div>

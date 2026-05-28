@@ -1,7 +1,15 @@
 export type KernelId = string;
 
 export type MemberStatus = "invited" | "active" | "reliable" | "steward";
-export type ChallengeStatus = "draft" | "active" | "proof_submitted" | "completed";
+export type ChallengeStatus =
+  | "draft"
+  | "active"
+  | "proof_submitted"
+  | "validating"
+  | "resolved"
+  | "rewarded"
+  | "sealed";
+export type ChallengeValidationMode = "self" | "peer" | "host" | "witness" | "automatic";
 export type TransactionStage = "commitment" | "proof" | "validation" | "reward" | "trace";
 export type ArchitectureLicenseType = "private" | "community_use" | "paid_fork" | "open_fork";
 export type PatternStatus = "proposed" | "forming" | "live" | "sealed" | "dormant";
@@ -16,6 +24,24 @@ export type PulseEventType =
   | "treasury_moved"
   | "proposal_forming"
   | "inference_observed";
+
+export type ChallengeTemplate = {
+  id: KernelId;
+  title: string;
+  commitment: string;
+  stakeAmount: number;
+  stakeCurrency: "SYM";
+  rewardAmount: number;
+  deadlineOffsetDays: number;
+  proofRequirements: string[];
+  validationMode: ChallengeValidationMode;
+  reliabilityImpact: number;
+  treasuryImpact: {
+    stakeToReserve: number;
+    rewardFromTreasury: number;
+  };
+  forkable: boolean;
+};
 
 export type User = {
   id: KernelId;
@@ -87,12 +113,30 @@ export type Ritual = {
 export type Challenge = {
   id: KernelId;
   ritualId: KernelId;
+  templateId: KernelId | null;
   title: string;
   commitment: string;
+  stakeAmount: number;
+  stakeCurrency: "SYM";
   rewardAmount: number;
+  deadline: string;
+  proofRequirements: string[];
+  validationMode: ChallengeValidationMode;
+  reliabilityImpact: number;
+  treasuryImpact: {
+    stakeToReserve: number;
+    rewardFromTreasury: number;
+  };
+  rewardPreview: string;
+  tracePreview: string;
   status: ChallengeStatus;
   createdAt: string;
-  completedAt: string | null;
+  activatedAt: string | null;
+  proofSubmittedAt: string | null;
+  validatingAt: string | null;
+  resolvedAt: string | null;
+  rewardedAt: string | null;
+  sealedAt: string | null;
 };
 
 export type Attendance = {
@@ -170,6 +214,7 @@ export type OperationalPattern = {
   proofLogic: string;
   treasuryLogic: string;
   governance: string;
+  challengeTemplates: ChallengeTemplate[];
   lineage: KernelId[];
   createdAt: string;
 };
@@ -195,11 +240,7 @@ export type ArchitectureTemplate = {
     title: string;
     cadence: string;
   }>;
-  challengeTemplates: Array<{
-    title: string;
-    commitment: string;
-    rewardAmount: number;
-  }>;
+  challengeTemplates: ChallengeTemplate[];
   status: PatternStatus;
   fitnessScore: number;
   populationCount: number;
@@ -281,6 +322,7 @@ export type SealedArchitecture = {
     memberRoles: string[];
     rituals: Ritual[];
     challengeTemplates: Challenge[];
+    forkableChallengeTemplates: ChallengeTemplate[];
     proofRules: string[];
     rewardLoop: string;
     treasuryLogic: string;

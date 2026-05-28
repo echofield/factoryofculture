@@ -61,6 +61,9 @@ Read:
 - `GET /api/kernel/treasury`: treasuries, rewards, and transactions.
 - `GET /api/kernel/patterns`: exportable operating patterns.
 - `GET /api/kernel/trace`: transaction traces.
+- `GET /api/kernel/challenges`: challenge templates, active records, history, and the kernel chain.
+- `GET /api/kernel/challenges/templates`: forkable challenge templates from architecture and pattern species.
+- `GET /api/kernel/challenges/history`: challenge records with proofs, rewards, transactions, ritual, circle, and pattern context.
 - `GET /api/kernel/architecture/templates`: prebuilt architecture templates.
 - `GET /api/kernel/architecture/sealed`: sealed architectures, licenses, metrics, failures, and signals.
 - `GET /api/kernel/architecture/forks`: architecture fork records.
@@ -75,7 +78,15 @@ Write:
 - `POST /api/kernel/circle`
 - `POST /api/kernel/invite`
 - `POST /api/kernel/ritual`
-- `POST /api/kernel/challenge`
+- `POST /api/kernel/challenge` or `POST /api/kernel/challenges`
+- `POST /api/kernel/challenges/activate`
+- `POST /api/kernel/challenges/proof`
+- `POST /api/kernel/challenges/validate`
+- `POST /api/kernel/challenges/resolve`
+- `POST /api/kernel/challenges/reward`
+- `POST /api/kernel/challenges/seal`
+- `POST /api/kernel/challenges/complete`
+- `POST /api/kernel/challenges/preview`
 - `POST /api/kernel/attendance`
 - `POST /api/kernel/proof`
 - `POST /api/kernel/challenge/complete`
@@ -98,11 +109,25 @@ Architecture templates included:
 - Neighborhood Mutual Aid
 - Nightlife Cell
 
+The kernel chain is:
+
+```text
+Pattern -> Ritual -> Challenge -> Attendance -> Proof -> Validation -> Reward -> Treasury -> Trace -> Fitness -> Fork
+```
+
+Challenge is the universal action unit. Every pattern/species carries forkable challenge templates with stake preview, proof requirements, deadline, validation mode, reward preview, treasury impact, and reliability impact.
+
+The challenge lifecycle is:
+
+```text
+draft -> active -> proof_submitted -> validating -> resolved -> rewarded -> sealed
+```
+
 The architecture layer supports this lifecycle:
 
 1. Choose a prebuilt architecture.
 2. Instantiate it into place/community/circle/ritual/challenge primitives.
-3. Operate it with attendance, proof, challenge completion, rewards, and traces.
+3. Operate it through challenge commitments, attendance, proof, validation, rewards, and traces.
 4. Seal it into an immutable DNA snapshot.
 5. Attach license, outcome metrics, failure artifacts, and inference signals.
 6. Fork it into another community/place while preserving lineage.

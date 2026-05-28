@@ -57,6 +57,38 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
             </div>
           </div>
 
+          <SectionRule num="§00" label="Action Spine" right="Challenge is the economic unit" />
+          <div className="def-list">
+            <DefRow k="Kernel chain">
+              <div style={{display:"flex", flexWrap:"wrap", gap:6}}>
+                {window.KERNEL_CHAIN.map((step, i) => (
+                  <React.Fragment key={step}>
+                    <span className={"code-tag" + (step === "Challenge" ? " accent" : "")}>{step}</span>
+                    {i < window.KERNEL_CHAIN.length - 1 && <span className="code-tag">→</span>}
+                  </React.Fragment>
+                ))}
+              </div>
+            </DefRow>
+            <DefRow k="Challenge templates">
+              <div style={{display:"grid", gap:10}}>
+                {t.challengeTemplates.map((challenge) => (
+                  <div key={challenge.id} style={{border:"1px solid var(--rule)", padding:"12px 14px", background:"rgba(255,255,255,0.02)"}}>
+                    <div style={{display:"flex", justifyContent:"space-between", gap:12, alignItems:"baseline"}}>
+                      <strong style={{fontFamily:"var(--font-display)", fontSize:15}}>{challenge.title}</strong>
+                      <span className="code-tag accent">{challenge.validation} validation</span>
+                    </div>
+                    <div className="code-tag" style={{marginTop:6}}>
+                      stake {challenge.stake} · reward {challenge.reward} · due {challenge.deadline} · reliability {challenge.reliability}
+                    </div>
+                    <div className="serif-em" style={{fontSize:13, marginTop:8, color:"var(--ink-3)"}}>
+                      proof · {challenge.proof.join(" / ")}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </DefRow>
+          </div>
+
           <SectionRule num="§01" label="Operating Shape" right="What recurs" />
           <div className="def-list">
             <DefRow k="Roles">

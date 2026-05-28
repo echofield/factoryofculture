@@ -126,15 +126,20 @@ export default function KernelCockpit() {
         <aside className="panel stack">
           <h2>Dashboard</h2>
           {error ? <div className="error">{error}</div> : null}
+          <p className="small">Challenge is the universal action unit: commitment, proof, validation, reward, trace.</p>
           <div className="flow">
             {[
-              "Place anchors the graph",
-              "Community declares a thesis",
-              "Circle packages the operating pattern",
+              "Pattern holds the operating DNA",
               "Ritual creates recurrence",
               "Challenge creates commitment",
-              "Attendance and proof create reliability",
-              "SYMIONE trace records settlement"
+              "Attendance records presence",
+              "Proof submits the artifact",
+              "Validation turns proof into trust",
+              "Reward creates continuity",
+              "Treasury records consequence",
+              "Trace emits SYMIONE memory",
+              "Fitness updates the pattern",
+              "Fork transmits the architecture"
             ].map((step, index) => (
               <div className="flow-step" key={step}>
                 <div className="node">{index + 1}</div>
@@ -212,12 +217,33 @@ export default function KernelCockpit() {
               title="Create Challenge"
               tag="commitment"
               busy={busy}
-              onSubmit={(data) => submit("challenge", { ...data, ritualId: data.ritualId || first.ritualId, rewardAmount: Number(data.rewardAmount || 50) })}
+              onSubmit={(data) => submit("challenges", {
+                ...data,
+                ritualId: data.ritualId || first.ritualId,
+                stakeAmount: Number(data.stakeAmount || 20),
+                rewardAmount: Number(data.rewardAmount || 50),
+                reliabilityImpact: Number(data.reliabilityImpact || 8)
+              })}
               fields={[
                 ["ritualId", "Ritual id", first.ritualId],
                 ["title", "Challenge title", "Bring one useful guest"],
                 ["commitment", "Commitment", "Attend, introduce one aligned person, and leave a proof note"],
-                ["rewardAmount", "Reward SYM", "50"]
+                ["stakeAmount", "Stake preview SYM", "20"],
+                ["rewardAmount", "Reward SYM", "50"],
+                ["deadline", "Deadline", new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()],
+                ["validationMode", "Validation mode", "host"],
+                ["proofRequirements", "Proof requirements", "attendance check-in | host witness | field note"],
+                ["reliabilityImpact", "Reliability impact", "8"]
+              ]}
+            />
+            <KernelForm
+              title="Activate Challenge"
+              tag="stake"
+              busy={busy}
+              onSubmit={(data) => submit("challenges/activate", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
+              fields={[
+                ["challengeId", "Challenge id", first.challengeId],
+                ["userId", "User id", first.userId]
               ]}
             />
             <KernelForm
@@ -234,7 +260,7 @@ export default function KernelCockpit() {
               title="Submit Proof"
               tag="artifact"
               busy={busy}
-              onSubmit={(data) => submit("proof", { ...data, challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId, type: (data.type || "attestation") as Proof["type"] })}
+              onSubmit={(data) => submit("challenges/proof", { ...data, challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId, type: (data.type || "attestation") as Proof["type"] })}
               fields={[
                 ["challengeId", "Challenge id", first.challengeId],
                 ["userId", "User id", first.userId],
@@ -243,10 +269,40 @@ export default function KernelCockpit() {
               ]}
             />
             <KernelForm
-              title="Complete Challenge"
+              title="Validate Proof"
+              tag="validation"
+              busy={busy}
+              onSubmit={(data) => submit("challenges/validate", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
+              fields={[
+                ["challengeId", "Challenge id", first.challengeId],
+                ["userId", "User id", first.userId]
+              ]}
+            />
+            <KernelForm
+              title="Resolve Challenge"
               tag="resolution"
               busy={busy}
-              onSubmit={(data) => submit("challenge/complete", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
+              onSubmit={(data) => submit("challenges/resolve", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
+              fields={[
+                ["challengeId", "Challenge id", first.challengeId],
+                ["userId", "User id", first.userId]
+              ]}
+            />
+            <KernelForm
+              title="Reward Challenge"
+              tag="reward"
+              busy={busy}
+              onSubmit={(data) => submit("challenges/reward", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
+              fields={[
+                ["challengeId", "Challenge id", first.challengeId],
+                ["userId", "User id", first.userId]
+              ]}
+            />
+            <KernelForm
+              title="Seal Challenge"
+              tag="seal"
+              busy={busy}
+              onSubmit={(data) => submit("challenges/seal", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
               fields={[
                 ["challengeId", "Challenge id", first.challengeId],
                 ["userId", "User id", first.userId]
@@ -267,7 +323,7 @@ export default function KernelCockpit() {
               title="SYMIONE Preview"
               tag="trace"
               busy={busy}
-              onSubmit={(data) => submit("transaction/preview", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
+              onSubmit={(data) => submit("challenges/preview", { challengeId: data.challengeId || first.challengeId, userId: data.userId || first.userId })}
               fields={[
                 ["challengeId", "Challenge id", first.challengeId],
                 ["userId", "User id", first.userId]
@@ -359,6 +415,17 @@ function SystemView({ state }: { state: KernelState }) {
         <h2>Exportable Pattern</h2>
       </header>
       <pre>{JSON.stringify(pattern ?? {}, null, 2)}</pre>
+      <header>
+        <h2>Challenge History</h2>
+      </header>
+      <div className="list">
+        {state.challenges.slice(-5).map((challenge) => (
+          <div className="item" key={challenge.id}>
+            <strong>{challenge.title}</strong>
+            <span>{challenge.status} / {challenge.validationMode} / {challenge.rewardAmount} SYM / +{challenge.reliabilityImpact} reliability</span>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

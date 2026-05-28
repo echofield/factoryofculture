@@ -6,6 +6,8 @@ import type {
   ArchitectureTemplate,
   Attendance,
   Challenge,
+  ChallengeTemplate,
+  ChallengeValidationMode,
   FailureArtifact,
   InferenceSignal,
   KernelEvent,
@@ -57,6 +59,40 @@ const emptyState: KernelState = {
   events: []
 };
 
+function challengeTemplate(input: {
+  id: KernelId;
+  title: string;
+  commitment: string;
+  rewardAmount: number;
+  proofRequirements: string[];
+  validationMode: ChallengeValidationMode;
+  stakeAmount?: number;
+  deadlineOffsetDays?: number;
+  reliabilityImpact?: number;
+  stakeToReserve?: number;
+  forkable?: boolean;
+}): ChallengeTemplate {
+  const stakeAmount = Number(input.stakeAmount ?? 25);
+  const rewardAmount = Number(input.rewardAmount);
+  return {
+    id: input.id,
+    title: input.title,
+    commitment: input.commitment,
+    stakeAmount,
+    stakeCurrency: "SYM",
+    rewardAmount,
+    deadlineOffsetDays: Number(input.deadlineOffsetDays ?? 7),
+    proofRequirements: input.proofRequirements,
+    validationMode: input.validationMode,
+    reliabilityImpact: Number(input.reliabilityImpact ?? 8),
+    treasuryImpact: {
+      stakeToReserve: Number(input.stakeToReserve ?? Math.round(stakeAmount * 0.2)),
+      rewardFromTreasury: rewardAmount
+    },
+    forkable: input.forkable ?? true
+  };
+}
+
 export const architectureTemplates: ArchitectureTemplate[] = [
   {
     id: "tpl_supper_club_season",
@@ -70,16 +106,28 @@ export const architectureTemplates: ArchitectureTemplate[] = [
     memberRoles: ["host", "guest-bringer", "witness", "steward"],
     ritualTemplates: [{ title: "Season Table", cadence: "weekly" }],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_supper_guest",
         title: "Bring one aligned guest",
         commitment: "Attend the table, bring one useful guest, and leave a field note.",
-        rewardAmount: 50
-      },
-      {
+        rewardAmount: 50,
+        stakeAmount: 20,
+        deadlineOffsetDays: 7,
+        proofRequirements: ["attendance check-in", "guest sponsor note", "host witness", "field note"],
+        validationMode: "host",
+        reliabilityImpact: 8
+      }),
+      challengeTemplate({
+        id: "ct_supper_host_handoff",
         title: "Host handoff",
         commitment: "Prepare the next host with venue, guest, and ritual notes.",
-        rewardAmount: 80
-      }
+        rewardAmount: 80,
+        stakeAmount: 30,
+        deadlineOffsetDays: 3,
+        proofRequirements: ["handoff note", "next host confirmation", "venue readiness check"],
+        validationMode: "witness",
+        reliabilityImpact: 10
+      })
     ],
     status: "live",
     fitnessScore: 0.91,
@@ -110,16 +158,28 @@ export const architectureTemplates: ArchitectureTemplate[] = [
       { title: "Monthly Showcase", cadence: "monthly" }
     ],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_music_session_contribution",
         title: "Session contribution",
         commitment: "Attend the session and contribute one usable creative asset or support action.",
-        rewardAmount: 60
-      },
-      {
+        rewardAmount: 60,
+        stakeAmount: 25,
+        deadlineOffsetDays: 7,
+        proofRequirements: ["session check-in", "asset link or support note", "peer attestation"],
+        validationMode: "peer",
+        reliabilityImpact: 8
+      }),
+      challengeTemplate({
+        id: "ct_music_venue_relationship",
         title: "Venue relationship",
         commitment: "Maintain one venue relationship and document the next useful opening.",
-        rewardAmount: 90
-      }
+        rewardAmount: 90,
+        stakeAmount: 35,
+        deadlineOffsetDays: 14,
+        proofRequirements: ["venue contact note", "next opening", "steward confirmation"],
+        validationMode: "witness",
+        reliabilityImpact: 11
+      })
     ],
     status: "live",
     fitnessScore: 0.89,
@@ -147,11 +207,17 @@ export const architectureTemplates: ArchitectureTemplate[] = [
     memberRoles: ["regular", "host", "place steward", "witness"],
     ritualTemplates: [{ title: "Place Gathering", cadence: "weekly" }],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_place_useful_action",
         title: "Useful local action",
         commitment: "Complete one useful action for the place or circle and submit proof.",
-        rewardAmount: 45
-      }
+        rewardAmount: 45,
+        stakeAmount: 15,
+        deadlineOffsetDays: 7,
+        proofRequirements: ["place check-in", "action note", "place steward validation"],
+        validationMode: "host",
+        reliabilityImpact: 7
+      })
     ],
     status: "live",
     fitnessScore: 0.85,
@@ -179,11 +245,18 @@ export const architectureTemplates: ArchitectureTemplate[] = [
     memberRoles: ["challenger", "witness", "resolver"],
     ritualTemplates: [{ title: "Commitment Sprint", cadence: "14 days" }],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_commitment_finite",
         title: "Finite commitment",
         commitment: "Declare one measurable commitment, complete it by deadline, and submit proof.",
-        rewardAmount: 70
-      }
+        rewardAmount: 70,
+        stakeAmount: 50,
+        deadlineOffsetDays: 21,
+        proofRequirements: ["dated declaration", "proof artifact", "resolver note"],
+        validationMode: "peer",
+        reliabilityImpact: 12,
+        stakeToReserve: 20
+      })
     ],
     status: "live",
     fitnessScore: 0.73,
@@ -214,11 +287,17 @@ export const architectureTemplates: ArchitectureTemplate[] = [
       { title: "Guild Review", cadence: "monthly" }
     ],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_creator_publish_artifact",
         title: "Publish one artifact",
         commitment: "Ship one public artifact and submit the trace.",
-        rewardAmount: 65
-      }
+        rewardAmount: 65,
+        stakeAmount: 25,
+        deadlineOffsetDays: 30,
+        proofRequirements: ["published URL", "peer review", "shipping note"],
+        validationMode: "peer",
+        reliabilityImpact: 9
+      })
     ],
     status: "live",
     fitnessScore: 0.83,
@@ -246,11 +325,17 @@ export const architectureTemplates: ArchitectureTemplate[] = [
     memberRoles: ["neighbor", "helper", "witness", "allocator"],
     ritualTemplates: [{ title: "Needs Review", cadence: "weekly" }],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_mutual_aid_help_action",
         title: "Complete one help action",
         commitment: "Accept one concrete need, complete it, and submit witnessed proof.",
-        rewardAmount: 40
-      }
+        rewardAmount: 40,
+        stakeAmount: 10,
+        deadlineOffsetDays: 5,
+        proofRequirements: ["request scope", "completion note", "recipient or witness attestation"],
+        validationMode: "witness",
+        reliabilityImpact: 9
+      })
     ],
     status: "forming",
     fitnessScore: 0.92,
@@ -278,16 +363,28 @@ export const architectureTemplates: ArchitectureTemplate[] = [
     memberRoles: ["resident", "door", "floor host", "closer", "steward"],
     ritualTemplates: [{ title: "Last Friday Night", cadence: "monthly" }],
     challengeTemplates: [
-      {
+      challengeTemplate({
+        id: "ct_nightlife_close_clean",
         title: "Close the room cleanly",
         commitment: "Run the night, file the closer note, and submit no-incident or incident proof.",
-        rewardAmount: 110
-      },
-      {
+        rewardAmount: 110,
+        stakeAmount: 45,
+        deadlineOffsetDays: 2,
+        proofRequirements: ["door count log", "floor health note", "incident attestation", "closer note"],
+        validationMode: "host",
+        reliabilityImpact: 12
+      }),
+      challengeTemplate({
+        id: "ct_nightlife_resident_contribution",
         title: "Resident contribution",
         commitment: "Record the set, file attendance/door count, and name one useful fork signal.",
-        rewardAmount: 85
-      }
+        rewardAmount: 85,
+        stakeAmount: 35,
+        deadlineOffsetDays: 3,
+        proofRequirements: ["set recording", "door count", "fork signal note"],
+        validationMode: "witness",
+        reliabilityImpact: 9
+      })
     ],
     status: "live",
     fitnessScore: 0.82,
@@ -313,8 +410,62 @@ function plusHours(baseIso: string, hours: number) {
   return new Date(new Date(baseIso).getTime() + hours * 60 * 60 * 1000).toISOString();
 }
 
+function plusDays(baseIso: string, days: number) {
+  return plusHours(baseIso, days * 24);
+}
+
 function id(prefix: string): KernelId {
   return `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
+}
+
+function defaultChallengeTemplates(): ChallengeTemplate[] {
+  return [
+    challengeTemplate({
+      id: "ct_default_commitment",
+      title: "Useful commitment",
+      commitment: "Declare one concrete action, complete it by deadline, and submit proof.",
+      rewardAmount: 50,
+      stakeAmount: 20,
+      deadlineOffsetDays: 7,
+      proofRequirements: ["attendance or action record", "proof artifact", "witness or steward validation"],
+      validationMode: "witness",
+      reliabilityImpact: 8
+    })
+  ];
+}
+
+function cloneChallengeTemplates(templates: ChallengeTemplate[]) {
+  return templates.map((template) => ({
+    ...template,
+    proofRequirements: [...template.proofRequirements],
+    treasuryImpact: { ...template.treasuryImpact }
+  }));
+}
+
+function isValidationMode(value: unknown): value is ChallengeValidationMode {
+  return value === "self" || value === "peer" || value === "host" || value === "witness" || value === "automatic";
+}
+
+function isChallengeStatus(value: unknown): value is Challenge["status"] {
+  return (
+    value === "draft" ||
+    value === "active" ||
+    value === "proof_submitted" ||
+    value === "validating" ||
+    value === "resolved" ||
+    value === "rewarded" ||
+    value === "sealed"
+  );
+}
+
+function normalizeProofRequirements(value: unknown, fallback: string[]) {
+  if (Array.isArray(value)) {
+    return value.map(String).map((item) => item.trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value.split(/[|,\n]/).map((item) => item.trim()).filter(Boolean);
+  }
+  return fallback;
 }
 
 async function ensureDataFile() {
@@ -432,6 +583,46 @@ export function summarizeKernel(state: KernelState) {
   };
 }
 
+export function listChallengeTemplates(state: KernelState) {
+  const patternTemplates = state.patterns.flatMap((pattern) =>
+    (pattern.challengeTemplates?.length ? pattern.challengeTemplates : defaultChallengeTemplates()).map((template) => ({
+      ...template,
+      patternId: pattern.id,
+      patternName: pattern.name,
+      source: "pattern"
+    }))
+  );
+  const architectureTemplateTemplates = architectureTemplates.flatMap((template) =>
+    template.challengeTemplates.map((challenge) => ({
+      ...challenge,
+      architectureTemplateId: template.id,
+      architectureTemplateName: template.name,
+      source: "architecture_template"
+    }))
+  );
+  return [...architectureTemplateTemplates, ...patternTemplates];
+}
+
+export function getChallengeHistory(state: KernelState) {
+  return state.challenges.map((challenge) => {
+    const proofs = state.proofs.filter((proof) => proof.challengeId === challenge.id);
+    const rewards = state.rewards.filter((reward) => reward.challengeId === challenge.id);
+    const transactions = state.transactions.filter((transaction) => transaction.challengeId === challenge.id);
+    const ritual = state.rituals.find((item) => item.id === challenge.ritualId) ?? null;
+    const circle = ritual ? state.circles.find((item) => item.id === ritual.circleId) ?? null : null;
+    const pattern = circle ? state.patterns.find((item) => item.circleId === circle.id) ?? null : null;
+    return {
+      challenge,
+      ritual,
+      circle,
+      pattern,
+      proofs,
+      rewards,
+      transactions
+    };
+  });
+}
+
 export function createPlace(state: KernelState, input: { name: string; address: string; role?: string }) {
   const place = {
     id: id("plc"),
@@ -504,6 +695,7 @@ export function createCircle(
     proofLogic: "submitted artifacts are validated before reward",
     treasuryLogic: "circle rewards draw from a shared SYMIONE memory treasury",
     governance: "circle steward can update member status after resolved actions",
+    challengeTemplates: defaultChallengeTemplates(),
     lineage: [],
     createdAt: now()
   };
@@ -573,6 +765,7 @@ export function instantiateArchitectureTemplate(
   pattern.proofLogic = template.proofRules.join(" | ");
   pattern.treasuryLogic = template.treasuryLogic;
   pattern.governance = template.governance;
+  pattern.challengeTemplates = cloneChallengeTemplates(template.challengeTemplates);
 
   const rituals = template.ritualTemplates.map((ritualTemplate) =>
     createRitual(state, {
@@ -590,7 +783,14 @@ export function instantiateArchitectureTemplate(
           ritualId: targetRitual.id,
           title: challengeTemplate.title,
           commitment: challengeTemplate.commitment,
-          rewardAmount: challengeTemplate.rewardAmount
+          templateId: challengeTemplate.id,
+          rewardAmount: challengeTemplate.rewardAmount,
+          stakeAmount: challengeTemplate.stakeAmount,
+          deadline: plusDays(now(), challengeTemplate.deadlineOffsetDays),
+          proofRequirements: challengeTemplate.proofRequirements,
+          validationMode: challengeTemplate.validationMode,
+          reliabilityImpact: challengeTemplate.reliabilityImpact,
+          status: "active"
         })
       )
     : [];
@@ -700,26 +900,75 @@ export function createRitual(
 
 export function createChallenge(
   state: KernelState,
-  input: { ritualId: KernelId; title: string; commitment: string; rewardAmount?: number }
+  input: {
+    ritualId: KernelId;
+    templateId?: KernelId | null;
+    title: string;
+    commitment: string;
+    stakeAmount?: number;
+    rewardAmount?: number;
+    deadline?: string;
+    proofRequirements?: string[] | string;
+    validationMode?: ChallengeValidationMode;
+    reliabilityImpact?: number;
+    status?: Challenge["status"];
+  }
 ) {
   const ritual = state.rituals.find((item) => item.id === input.ritualId);
   if (!ritual) {
     throw new Error("ritual_not_found");
   }
+  const circle = state.circles.find((item) => item.id === ritual.circleId);
+  const pattern = state.patterns.find((item) => item.circleId === circle?.id);
+  const template = [...(pattern?.challengeTemplates ?? []), ...architectureTemplates.flatMap((item) => item.challengeTemplates)]
+    .find((item) => item.id === input.templateId);
+  const stakeAmount = Number(input.stakeAmount ?? template?.stakeAmount ?? 25);
+  const rewardAmount = Number(input.rewardAmount ?? template?.rewardAmount ?? 50);
+  const deadline = input.deadline || plusDays(now(), template?.deadlineOffsetDays ?? 7);
+  const proofRequirements = normalizeProofRequirements(
+    input.proofRequirements,
+    template?.proofRequirements ?? ["proof artifact", "witness or steward validation"]
+  );
+  const validationMode = isValidationMode(input.validationMode)
+    ? input.validationMode
+    : template?.validationMode ?? "witness";
+  const reliabilityImpact = Number(input.reliabilityImpact ?? template?.reliabilityImpact ?? 8);
+  const treasuryImpact = {
+    stakeToReserve: template?.treasuryImpact.stakeToReserve ?? Math.round(stakeAmount * 0.2),
+    rewardFromTreasury: template?.treasuryImpact.rewardFromTreasury ?? rewardAmount
+  };
+  const status = isChallengeStatus(input.status) ? input.status : "draft";
   const challenge: Challenge = {
     id: id("cha"),
     ritualId: ritual.id,
+    templateId: template?.id ?? input.templateId ?? null,
     title: input.title.trim(),
     commitment: input.commitment.trim(),
-    rewardAmount: Number(input.rewardAmount || 50),
-    status: "active",
+    stakeAmount,
+    stakeCurrency: "SYM",
+    rewardAmount,
+    deadline,
+    proofRequirements,
+    validationMode,
+    reliabilityImpact,
+    treasuryImpact,
+    rewardPreview: `${rewardAmount} SYM after ${validationMode} validation`,
+    tracePreview: `commitment -> proof -> ${validationMode} validation -> ${rewardAmount} SYM reward -> trace`,
+    status,
     createdAt: now(),
-    completedAt: null
+    activatedAt: status === "active" ? now() : null,
+    proofSubmittedAt: null,
+    validatingAt: null,
+    resolvedAt: null,
+    rewardedAt: null,
+    sealedAt: null
   };
   state.challenges.push(challenge);
   appendEvent(state, "challenge.created", "challenge", challenge.id, {
     ritualId: ritual.id,
-    rewardAmount: challenge.rewardAmount
+    stakeAmount: challenge.stakeAmount,
+    rewardAmount: challenge.rewardAmount,
+    validationMode: challenge.validationMode
   });
   return challenge;
 }
@@ -746,6 +995,23 @@ export function markAttendance(state: KernelState, input: { ritualId: KernelId; 
   return attendance;
 }
 
+export function activateChallenge(state: KernelState, input: { challengeId: KernelId; userId?: KernelId }) {
+  const challenge = state.challenges.find((item) => item.id === input.challengeId);
+  if (!challenge) {
+    throw new Error("challenge_not_found");
+  }
+  if (challenge.status !== "draft") {
+    return challenge;
+  }
+  challenge.status = "active";
+  challenge.activatedAt = now();
+  appendEvent(state, "challenge.activated", "challenge", challenge.id, {
+    stakeAmount: challenge.stakeAmount,
+    deadline: challenge.deadline
+  }, input.userId ?? null);
+  return challenge;
+}
+
 export function submitProof(
   state: KernelState,
   input: { challengeId: KernelId; userId: KernelId; type?: Proof["type"]; content: string }
@@ -753,6 +1019,12 @@ export function submitProof(
   const challenge = state.challenges.find((item) => item.id === input.challengeId);
   if (!challenge) {
     throw new Error("challenge_not_found");
+  }
+  if (challenge.status === "draft") {
+    throw new Error("challenge_not_active");
+  }
+  if (challenge.status === "sealed") {
+    throw new Error("challenge_already_sealed");
   }
   if (!state.users.some((user) => user.id === input.userId)) {
     throw new Error("user_not_found");
@@ -768,6 +1040,7 @@ export function submitProof(
     validatedAt: null
   };
   challenge.status = "proof_submitted";
+  challenge.proofSubmittedAt = proof.submittedAt;
   state.proofs.push(proof);
   const circle = circleForChallenge(state, challenge.id);
   const pattern = state.patterns.find((item) => item.circleId === circle?.id);
@@ -790,7 +1063,7 @@ export function submitProof(
   return proof;
 }
 
-export function completeChallenge(state: KernelState, input: { challengeId: KernelId; userId: KernelId }) {
+export function validateChallengeProof(state: KernelState, input: { challengeId: KernelId; userId: KernelId }) {
   const challenge = state.challenges.find((item) => item.id === input.challengeId);
   if (!challenge) {
     throw new Error("challenge_not_found");
@@ -802,36 +1075,16 @@ export function completeChallenge(state: KernelState, input: { challengeId: Kern
     throw new Error("proof_required");
   }
 
-  challenge.status = "completed";
-  challenge.completedAt = now();
+  challenge.status = "validating";
+  challenge.validatingAt = now();
   proof.status = "validated";
   proof.validatedAt = now();
 
-  const reward: Reward = {
-    id: id("rwd"),
-    challengeId: challenge.id,
-    userId: input.userId,
-    amount: challenge.rewardAmount,
-    reason: `Resolved: ${challenge.title}`,
-    createdAt: now()
-  };
-  state.rewards.push(reward);
-
   const circle = circleForChallenge(state, challenge.id);
   const pattern = state.patterns.find((item) => item.circleId === circle?.id);
-  const treasury = resolveTreasury(state, circle?.communityId ?? null, circle?.id ?? null);
-  treasury.balance -= reward.amount;
-  treasury.updatedAt = now();
-
-  const transaction = createTransactionTrace(state, treasury, challenge, input.userId, reward, proof);
-  if (pattern) {
-    pattern.fitnessScore = calculatePatternFitness(state, pattern.id);
-    pattern.populationCount = Math.max(pattern.populationCount, state.sealedArchitectures.filter((item) => item.patternId === pattern.id).length);
-    pattern.currentCycleState = "sealed";
-  }
-  appendEvent(state, "challenge.completed", "challenge", challenge.id, {
-    rewardId: reward.id,
-    transactionId: transaction.id
+  appendEvent(state, "challenge.validation_started", "challenge", challenge.id, {
+    proofId: proof.id,
+    validationMode: challenge.validationMode
   }, input.userId);
   emitPulseEvent(state, {
     type: "proof_validated",
@@ -842,15 +1095,78 @@ export function completeChallenge(state: KernelState, input: { challengeId: Kern
     description: `${proof.type} proof moved from submitted to validated.`,
     intensity: "medium"
   });
+  return { challenge, proof };
+}
+
+export function resolveChallenge(state: KernelState, input: { challengeId: KernelId; userId: KernelId }) {
+  const challenge = state.challenges.find((item) => item.id === input.challengeId);
+  if (!challenge) {
+    throw new Error("challenge_not_found");
+  }
+  const proof = state.proofs.find(
+    (item) => item.challengeId === challenge.id && item.userId === input.userId && item.status === "validated"
+  );
+  if (!proof) {
+    throw new Error("validated_proof_required");
+  }
+  challenge.status = "resolved";
+  challenge.resolvedAt = now();
+  appendEvent(state, "challenge.resolved", "challenge", challenge.id, {
+    proofId: proof.id,
+    validationMode: challenge.validationMode
+  }, input.userId);
   emitPulseEvent(state, {
     type: "challenge_completed",
-    patternId: pattern?.id ?? null,
-    circleId: circle?.id ?? null,
+    patternId: state.patterns.find((item) => item.circleId === circleForChallenge(state, challenge.id)?.id)?.id ?? null,
+    circleId: circleForChallenge(state, challenge.id)?.id ?? null,
     sealedArchitectureId: null,
-    title: `Challenge completed: ${challenge.title}`,
-    description: `Reward reserved: ${reward.amount} SYM.`,
+    title: `Challenge resolved: ${challenge.title}`,
+    description: `Validated commitment is ready for reward settlement.`,
     intensity: "high"
   });
+  return { challenge, proof };
+}
+
+export function rewardChallenge(state: KernelState, input: { challengeId: KernelId; userId: KernelId }) {
+  const challenge = state.challenges.find((item) => item.id === input.challengeId);
+  if (!challenge) {
+    throw new Error("challenge_not_found");
+  }
+  const proof = state.proofs.find(
+    (item) => item.challengeId === challenge.id && item.userId === input.userId && item.status === "validated"
+  );
+  if (!proof) {
+    throw new Error("validated_proof_required");
+  }
+  const circle = circleForChallenge(state, challenge.id);
+  const pattern = state.patterns.find((item) => item.circleId === circle?.id);
+  const treasury = resolveTreasury(state, circle?.communityId ?? null, circle?.id ?? null);
+  let reward = state.rewards.find((item) => item.challengeId === challenge.id && item.userId === input.userId);
+  if (!reward) {
+    reward = {
+      id: id("rwd"),
+      challengeId: challenge.id,
+      userId: input.userId,
+      amount: challenge.rewardAmount,
+      reason: `Resolved: ${challenge.title}`,
+      createdAt: now()
+    };
+    state.rewards.push(reward);
+    treasury.balance -= reward.amount;
+    treasury.updatedAt = now();
+  }
+  let transaction = state.transactions.find((item) => item.challengeId === challenge.id && item.userId === input.userId);
+  if (!transaction) {
+    transaction = createTransactionTrace(state, treasury, challenge, input.userId, reward, proof);
+  }
+  challenge.status = "rewarded";
+  challenge.rewardedAt = now();
+  applyReliabilityImpact(state, challenge, input.userId);
+  appendEvent(state, "challenge.rewarded", "challenge", challenge.id, {
+    rewardId: reward.id,
+    transactionId: transaction.id,
+    reliabilityImpact: challenge.reliabilityImpact
+  }, input.userId);
   emitPulseEvent(state, {
     type: "treasury_moved",
     patternId: pattern?.id ?? null,
@@ -861,6 +1177,50 @@ export function completeChallenge(state: KernelState, input: { challengeId: Kern
     intensity: "medium"
   });
   return { challenge, proof, reward, transaction };
+}
+
+export function sealChallenge(state: KernelState, input: { challengeId: KernelId; userId: KernelId }) {
+  const rewarded = rewardChallenge(state, input);
+  const circle = circleForChallenge(state, rewarded.challenge.id);
+  const pattern = state.patterns.find((item) => item.circleId === circle?.id);
+  rewarded.challenge.status = "sealed";
+  rewarded.challenge.sealedAt = now();
+  if (pattern) {
+    pattern.fitnessScore = calculatePatternFitness(state, pattern.id);
+    pattern.populationCount = Math.max(pattern.populationCount, state.sealedArchitectures.filter((item) => item.patternId === pattern.id).length);
+    pattern.currentCycleState = "sealed";
+  }
+  appendEvent(state, "challenge.sealed", "challenge", rewarded.challenge.id, {
+    trace: rewarded.transaction.trace,
+    fitnessScore: pattern?.fitnessScore ?? null
+  }, input.userId);
+  return rewarded;
+}
+
+export function completeChallenge(state: KernelState, input: { challengeId: KernelId; userId: KernelId }) {
+  const challenge = state.challenges.find((item) => item.id === input.challengeId);
+  if (!challenge) {
+    throw new Error("challenge_not_found");
+  }
+  if (challenge.status === "draft") {
+    activateChallenge(state, input);
+  }
+  if (challenge.status === "proof_submitted") {
+    validateChallengeProof(state, input);
+  }
+  if (challenge.status === "validating") {
+    resolveChallenge(state, input);
+  }
+  if (challenge.status === "resolved" || challenge.status === "rewarded") {
+    return sealChallenge(state, input);
+  }
+  if (challenge.status === "sealed") {
+    const proof = state.proofs.find((item) => item.challengeId === challenge.id && item.userId === input.userId);
+    const reward = state.rewards.find((item) => item.challengeId === challenge.id && item.userId === input.userId);
+    const transaction = state.transactions.find((item) => item.challengeId === challenge.id && item.userId === input.userId);
+    return { challenge, proof, reward, transaction };
+  }
+  throw new Error("proof_required");
 }
 
 export function updateMemberStatus(
@@ -979,6 +1339,7 @@ export function sealArchitecture(
       memberRoles: template?.memberRoles ?? inferMemberRoles(state, circle?.id ?? null),
       rituals,
       challengeTemplates: challenges,
+      forkableChallengeTemplates: cloneChallengeTemplates(pattern.challengeTemplates?.length ? pattern.challengeTemplates : template?.challengeTemplates ?? defaultChallengeTemplates()),
       proofRules: template?.proofRules ?? pattern.proofLogic.split("|").map((rule) => rule.trim()),
       rewardLoop: pattern.rewardLoop,
       treasuryLogic: pattern.treasuryLogic,
@@ -1082,6 +1443,7 @@ export function forkSealedArchitecture(
   pattern.proofLogic = sourcePattern.proofLogic;
   pattern.treasuryLogic = sourcePattern.treasuryLogic;
   pattern.governance = sourcePattern.governance;
+  pattern.challengeTemplates = cloneChallengeTemplates(sealed.dna.forkableChallengeTemplates?.length ? sealed.dna.forkableChallengeTemplates : sourcePattern.challengeTemplates ?? defaultChallengeTemplates());
   pattern.lineage = [...sourcePattern.lineage, sealed.id, sourcePattern.id];
 
   const rituals = sealed.dna.rituals.map((ritual) =>
@@ -1095,12 +1457,19 @@ export function forkSealedArchitecture(
   );
   const targetRitual = rituals[0];
   const challenges = targetRitual
-    ? sealed.dna.challengeTemplates.map((challenge) =>
+    ? pattern.challengeTemplates.map((challenge) =>
         createChallenge(state, {
           ritualId: targetRitual.id,
+          templateId: challenge.id,
           title: challenge.title,
           commitment: challenge.commitment,
-          rewardAmount: challenge.rewardAmount
+          rewardAmount: challenge.rewardAmount,
+          stakeAmount: challenge.stakeAmount,
+          deadline: plusDays(now(), challenge.deadlineOffsetDays),
+          proofRequirements: challenge.proofRequirements,
+          validationMode: challenge.validationMode,
+          reliabilityImpact: challenge.reliabilityImpact,
+          status: "active"
         })
       )
     : [];
@@ -1254,7 +1623,7 @@ function calculatePatternFitness(state: KernelState, patternId: KernelId) {
   if (!challenges.length) {
     return pattern?.fitnessScore ?? 0;
   }
-  const completed = challenges.filter((challenge) => challenge.status === "completed").length;
+  const completed = challenges.filter((challenge) => ["resolved", "rewarded", "sealed"].includes(challenge.status)).length;
   const proofCount = state.proofs.filter((proof) => challenges.some((challenge) => challenge.id === proof.challengeId)).length;
   const attendanceCount = state.attendance.filter((attendance) => ritualIds.has(attendance.ritualId)).length;
   const resolutionScore = completed / challenges.length;
@@ -1273,7 +1642,7 @@ function buildOutcomeMetrics(
     state.rituals.filter((ritual) => ritual.circleId === circleId).map((ritual) => ritual.id)
   );
   const challengeIds = new Set(challenges.map((challenge) => challenge.id));
-  const completed = challenges.filter((challenge) => challenge.status === "completed").length;
+  const completed = challenges.filter((challenge) => ["resolved", "rewarded", "sealed"].includes(challenge.status)).length;
   const resolutionRate = challenges.length ? Math.round((completed / challenges.length) * 100) : 0;
   const proofCount = state.proofs.filter((proof) => challengeIds.has(proof.challengeId)).length;
   const attendanceCount = state.attendance.filter((attendance) => ritualIds.has(attendance.ritualId)).length;
@@ -1341,6 +1710,26 @@ function resolveTreasury(state: KernelState, communityId: KernelId | null, circl
   return treasury;
 }
 
+function applyReliabilityImpact(state: KernelState, challenge: Challenge, userId: KernelId) {
+  const impact = Number(challenge.reliabilityImpact || 0);
+  const user = state.users.find((item) => item.id === userId);
+  if (user) {
+    user.reliabilityScore = Math.min(100, Math.max(0, user.reliabilityScore + impact));
+    if (user.reliabilityScore >= 70 && user.status === "active") {
+      user.status = "reliable";
+    }
+  }
+
+  const circle = circleForChallenge(state, challenge.id);
+  for (const membership of state.memberships.filter((item) => item.userId === userId && item.circleId === circle?.id)) {
+    membership.reliabilityScore = Math.min(100, Math.max(0, membership.reliabilityScore + impact));
+    membership.updatedAt = now();
+    if (membership.reliabilityScore >= 70 && membership.status === "active") {
+      membership.status = "reliable";
+    }
+  }
+}
+
 function circleForChallenge(state: KernelState, challengeId: KernelId) {
   const challenge = state.challenges.find((item) => item.id === challengeId);
   const ritual = state.rituals.find((item) => item.id === challenge?.ritualId);
@@ -1364,10 +1753,10 @@ function createTransactionTrace(
     amount: reward.amount,
     currency: "SYM",
     stages: [
-      { stage: "commitment", label: challenge.commitment, at: challenge.createdAt, ref: challenge.id },
+      { stage: "commitment", label: `${challenge.commitment} | stake preview ${challenge.stakeAmount} SYM`, at: challenge.activatedAt ?? challenge.createdAt, ref: challenge.id },
       { stage: "proof", label: proof.content, at: proof.submittedAt, ref: proof.id },
-      { stage: "validation", label: proof.status === "validated" ? "proof validated" : "validation pending", at: proof.validatedAt ?? stamp, ref: proof.id },
-      { stage: "reward", label: `${reward.amount} SYM reserved`, at: reward.createdAt, ref: reward.id },
+      { stage: "validation", label: `${challenge.validationMode} validation ${proof.status === "validated" ? "passed" : "pending"}`, at: proof.validatedAt ?? stamp, ref: proof.id },
+      { stage: "reward", label: `${reward.amount} SYM emitted; reliability +${challenge.reliabilityImpact}`, at: reward.createdAt, ref: reward.id },
       { stage: "trace", label: "append-only economic memory emitted", at: stamp, ref: treasury.id }
     ],
     trace: `SYMIONE:${treasury.id}:${challenge.id}:${proof.id}:${reward.id}`,

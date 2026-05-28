@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  activateChallenge,
   architectureTemplates,
   completeChallenge,
   createChallenge,
@@ -10,17 +11,23 @@ import {
   createTransactionPreview,
   forkSealedArchitecture,
   getKernelPulse,
+  getChallengeHistory,
   instantiateArchitectureTemplate,
   inviteMember,
+  listChallengeTemplates,
   markAttendance,
   readKernel,
   recordFailureArtifact,
   recordInferenceSignal,
   recordOutcomeMetric,
   sealArchitecture,
+  sealChallenge,
   submitProof,
   summarizeKernel,
   updateKernel,
+  validateChallengeProof,
+  resolveChallenge,
+  rewardChallenge,
   updateMemberStatus
 } from "@/lib/kernel-store";
 import { buildFactoryFrontendState } from "@/lib/factory-front-adapter";
@@ -66,6 +73,23 @@ export async function GET(_request: NextRequest, context: Params) {
 
   if (route === "treasury") {
     return ok({ treasuries: state.treasuries, rewards: state.rewards, transactions: state.transactions });
+  }
+
+  if (route === "challenges") {
+    return ok({
+      chain: "Pattern -> Ritual -> Challenge -> Attendance -> Proof -> Validation -> Reward -> Treasury -> Trace -> Fitness -> Fork",
+      challenges: state.challenges,
+      templates: listChallengeTemplates(state),
+      history: getChallengeHistory(state)
+    });
+  }
+
+  if (route === "challenges/templates") {
+    return ok({ templates: listChallengeTemplates(state) });
+  }
+
+  if (route === "challenges/history") {
+    return ok({ history: getChallengeHistory(state) });
   }
 
   if (route === "patterns") {
@@ -137,21 +161,40 @@ export async function POST(request: NextRequest, context: Params) {
           payload = createRitual(draft, input);
           break;
         case "challenge":
+        case "challenges":
           payload = createChallenge(draft, input);
+          break;
+        case "challenges/activate":
+          payload = activateChallenge(draft, input);
           break;
         case "attendance":
           payload = markAttendance(draft, input);
           break;
         case "proof":
+        case "challenges/proof":
           payload = submitProof(draft, input);
           break;
+        case "challenges/validate":
+          payload = validateChallengeProof(draft, input);
+          break;
+        case "challenges/resolve":
+          payload = resolveChallenge(draft, input);
+          break;
+        case "challenges/reward":
+          payload = rewardChallenge(draft, input);
+          break;
+        case "challenges/seal":
+          payload = sealChallenge(draft, input);
+          break;
         case "challenge/complete":
+        case "challenges/complete":
           payload = completeChallenge(draft, input);
           break;
         case "membership/status":
           payload = updateMemberStatus(draft, input);
           break;
         case "transaction/preview":
+        case "challenges/preview":
           payload = createTransactionPreview(draft, input);
           break;
         case "architecture/from-template":

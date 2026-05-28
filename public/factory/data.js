@@ -154,6 +154,39 @@ window.TEMPLATES = [
   }
 ];
 
+window.CHALLENGE_TEMPLATES_BY_CODE = {
+  SC: [
+    { id: "ct_supper_guest", title: "Bring one aligned guest", stake: "20 SYM", reward: "50 SYM", deadline: "7 days", validation: "host", reliability: "+8", proof: ["attendance check-in", "guest sponsor note", "host witness", "field note"] },
+    { id: "ct_supper_host_handoff", title: "Host handoff", stake: "30 SYM", reward: "80 SYM", deadline: "3 days", validation: "witness", reliability: "+10", proof: ["handoff note", "next host confirmation", "venue readiness check"] }
+  ],
+  MC: [
+    { id: "ct_music_session_contribution", title: "Session contribution", stake: "25 SYM", reward: "60 SYM", deadline: "7 days", validation: "peer", reliability: "+8", proof: ["session check-in", "asset link or support note", "peer attestation"] },
+    { id: "ct_music_venue_relationship", title: "Venue relationship", stake: "35 SYM", reward: "90 SYM", deadline: "14 days", validation: "witness", reliability: "+11", proof: ["venue contact note", "next opening", "steward confirmation"] }
+  ],
+  PC: [
+    { id: "ct_place_useful_action", title: "Useful local action", stake: "15 SYM", reward: "45 SYM", deadline: "7 days", validation: "host", reliability: "+7", proof: ["place check-in", "action note", "place steward validation"] }
+  ],
+  CC: [
+    { id: "ct_commitment_finite", title: "Finite commitment", stake: "50 SYM", reward: "70 SYM", deadline: "21 days", validation: "peer", reliability: "+12", proof: ["dated declaration", "proof artifact", "resolver note"] }
+  ],
+  CG: [
+    { id: "ct_creator_publish_artifact", title: "Publish one artifact", stake: "25 SYM", reward: "65 SYM", deadline: "30 days", validation: "peer", reliability: "+9", proof: ["published URL", "peer review", "shipping note"] }
+  ],
+  MA: [
+    { id: "ct_mutual_aid_help_action", title: "Complete one help action", stake: "10 SYM", reward: "40 SYM", deadline: "5 days", validation: "witness", reliability: "+9", proof: ["request scope", "completion note", "recipient or witness attestation"] }
+  ],
+  NL: [
+    { id: "ct_nightlife_close_clean", title: "Close the room cleanly", stake: "45 SYM", reward: "110 SYM", deadline: "2 days", validation: "host", reliability: "+12", proof: ["door count log", "floor health note", "incident attestation", "closer note"] },
+    { id: "ct_nightlife_resident_contribution", title: "Resident contribution", stake: "35 SYM", reward: "85 SYM", deadline: "3 days", validation: "witness", reliability: "+9", proof: ["set recording", "door count", "fork signal note"] }
+  ]
+};
+
+window.KERNEL_CHAIN = ["Pattern", "Ritual", "Challenge", "Attendance", "Proof", "Validation", "Reward", "Treasury", "Trace", "Fitness", "Fork"];
+window.TEMPLATES = window.TEMPLATES.map((template) => ({
+  ...template,
+  challengeTemplates: window.CHALLENGE_TEMPLATES_BY_CODE[template.code] || []
+}));
+
 // Sample instance for the live Kernel screen — Sunday Suppers · Paris.
 window.LIVE_INSTANCE = {
   templateCode: "SC",
@@ -198,17 +231,17 @@ window.LIVE_INSTANCE = {
     { name: "Esmé G.", role: "Host", attendance: 9, missed: 0, reliability: 1.0, joined: "Season 1" }
   ],
   traces: [
-    { ts: "2026-03-29 · 22:14", chain: ["commitment", "proof", "validation", "reward"], who: "Yannick D.", text: "Filed field note for week 09 · cosigned by Amina · host credit +1" },
+    { ts: "2026-03-29 · 22:14", chain: ["commitment", "proof", "validation", "reward", "trace"], who: "Yannick D.", text: "Filed field note for week 09 · cosigned by Amina · host credit +1" },
     { ts: "2026-03-29 · 21:48", chain: ["commitment", "proof", "validation"], who: "Amina K.", text: "Wine cellar log entered · validated by Lou" },
     { ts: "2026-03-23 · 19:30", chain: ["commitment"], who: "Lou C.", text: "Sponsored Yael as guest for week 10" },
-    { ts: "2026-03-22 · 23:51", chain: ["commitment", "proof", "validation", "reward"], who: "Marco V.", text: "Hosted week 08 · scribe note received · host credit +1" },
-    { ts: "2026-03-15 · 22:02", chain: ["commitment", "proof", "validation", "reward"], who: "Iris W.", text: "Hosted week 07 · scribe note received · host credit +1" },
+    { ts: "2026-03-22 · 23:51", chain: ["commitment", "proof", "validation", "reward", "trace"], who: "Marco V.", text: "Hosted week 08 · scribe note received · host credit +1" },
+    { ts: "2026-03-15 · 22:02", chain: ["commitment", "proof", "validation", "reward", "trace"], who: "Iris W.", text: "Hosted week 07 · scribe note received · host credit +1" },
     { ts: "2026-03-08 · 21:30", chain: ["commitment", "proof"], who: "Pablo M.", text: "Missed dinner week 06 · status pause flagged" }
   ],
   challenges: [
-    { id: "CH-09", title: "Bring something the room hasn't tasted", status: "open", participants: 12, deadline: "Week 13" },
-    { id: "CH-07", title: "Each member sponsors one guest", status: "closed", participants: 12, completed: 9, deadline: "Week 10" },
-    { id: "CH-04", title: "Cellar rotation — 3 regions", status: "closed", participants: 4, completed: 4, deadline: "Week 09" }
+    { id: "CH-09", title: "Bring something the room hasn't tasted", status: "active", participants: 12, deadline: "Week 13", stake: "20 SYM", reward: "50 SYM", validation: "host", reliability: "+8" },
+    { id: "CH-07", title: "Each member sponsors one guest", status: "sealed", participants: 12, completed: 9, deadline: "Week 10", stake: "20 SYM", reward: "50 SYM", validation: "witness", reliability: "+8" },
+    { id: "CH-04", title: "Cellar rotation — 3 regions", status: "rewarded", participants: 4, completed: 4, deadline: "Week 09", stake: "30 SYM", reward: "80 SYM", validation: "host", reliability: "+10" }
   ]
 };
 
