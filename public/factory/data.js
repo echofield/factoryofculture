@@ -182,6 +182,106 @@ window.CHALLENGE_TEMPLATES_BY_CODE = {
 };
 
 window.KERNEL_CHAIN = ["Pattern", "Ritual", "Challenge", "Attendance", "Proof", "Validation", "Reward", "Treasury", "Trace", "Fitness", "Fork"];
+
+// ── Archetypes — the 6 use case kernels. Each one pre-fills the entire operational
+//    kernel so the user recognises themselves instead of configuring infrastructure.
+window.ARCHETYPES = [
+  {
+    id: "crew",
+    num: "01",
+    label: "The Crew",
+    oneliner: "We show up together and we want stakes.",
+    cta: "Set up your crew",
+    hint: "basketball · friend group · skate crew · study circle",
+    governance: "equal",
+    proofPrimitive: "attendance",
+    economicLoop: "stake pool",
+    defaultCode: "CC",
+    spacetime: { time: "ongoing", space: "fixed" }
+  },
+  {
+    id: "night",
+    num: "02",
+    label: "The Night",
+    oneliner: "I run the room. Help me own it.",
+    cta: "Set up your night",
+    hint: "party organizer · event series · club night · pop-up",
+    governance: "organizer-led",
+    proofPrimitive: "door count",
+    economicLoop: "door split",
+    defaultCode: "NL",
+    spacetime: { time: "season", space: "nomadic" }
+  },
+  {
+    id: "collective",
+    num: "03",
+    label: "The Collective",
+    oneliner: "We make things together. Make the proof real.",
+    cta: "Set up your collective",
+    hint: "music collective · creator guild · sprint group · studio network",
+    governance: "peer validation",
+    proofPrimitive: "output artifact",
+    economicLoop: "contribution share",
+    defaultCode: "CG",
+    spacetime: { time: "ongoing", space: "distributed" }
+  },
+  {
+    id: "circle",
+    num: "04",
+    label: "The Circle",
+    oneliner: "We keep coming back. Turn that into something.",
+    cta: "Set up your circle",
+    hint: "café regulars · gym community · bookstore circle · neighborhood",
+    governance: "place steward",
+    proofPrimitive: "return frequency",
+    economicLoop: "loyalty stake",
+    defaultCode: "PC",
+    spacetime: { time: "ongoing", space: "fixed" }
+  },
+  {
+    id: "creator",
+    num: "05",
+    label: "The Creator",
+    oneliner: "I build the audience. Let them earn their place.",
+    cta: "Set up your creator circle",
+    hint: "musician · independent brand · Instagram creator · cultural figure",
+    governance: "creator authority",
+    proofPrimitive: "participation proof",
+    economicLoop: "access tiers",
+    defaultCode: "SC",
+    spacetime: { time: "ongoing", space: "distributed" }
+  },
+  {
+    id: "builder",
+    num: "06",
+    label: "The Builder",
+    oneliner: "I see the pattern. Let me seal it.",
+    cta: "Start composing",
+    hint: "solo builder · community designer · protocol architect",
+    governance: "sovereign",
+    proofPrimitive: "pattern seal",
+    economicLoop: "fork royalty",
+    defaultCode: "PC",
+    spacetime: { time: "season", space: "distributed" }
+  }
+];
+
+// ── DNA schema — the genetic layer of every card and pattern.
+//    spacetime is a first-class field from day one so all downstream features
+//    (Pulse strip, lineage map, marketplace filter) can depend on it without retrofit.
+window.DNA_SCHEMA = {
+  genesisSize: 10,              // first N participants get genesis privilege
+  founderStake: 0,              // % of treasury locked to founder
+  forkRoyalty: 0,               // % back to origin per fork
+  forkRoyaltyGenerations: 0,    // royalty dissolves after N generations
+  cohortSplits: [100, 0, 0],    // [genesis%, second%, open%]
+  decayActive: false,           // privilege decays if reliability drops
+  mutationLocked: false,        // if true, forks cannot alter DNA
+  spacetime: {
+    time: "ongoing",            // "one-shot" | "season" | "ongoing"
+    space: "fixed"              // "fixed" | "nomadic" | "distributed"
+  }
+};
 window.TEMPLATES = window.TEMPLATES.map((template) => ({
   ...template,
   challengeTemplates: window.CHALLENGE_TEMPLATES_BY_CODE[template.code] || []

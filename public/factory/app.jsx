@@ -2,6 +2,7 @@
 
 const ROUTES = [
   { key: "cover",       catalog: "FC·001", label: "Almanac",          right: "Cover" },
+  { key: "archetype",   catalog: "FC·000", label: "Archetypes",       right: "Entry" },
   { key: "library",     catalog: "FC·010", label: "Architecture Library", right: "05 patterns" },
   { key: "compose",     catalog: "FC·010", label: "Compose · New",    right: "Draft" },
   { key: "pattern",     catalog: "FC·020", label: "Pattern Detail",   right: "PC-031" },
@@ -23,7 +24,7 @@ function App() {
   // Hash route
   const [route, setRoute] = React.useState(() => {
     const h = (window.location.hash || "").replace("#","");
-    return ROUTES.find(r => r.key === h) ? h : "cover";
+    return ROUTES.find(r => r.key === h) ? h : "archetype";
   });
   const go = (k) => {
     setRoute(k);
@@ -141,6 +142,7 @@ function App() {
 
           <div className="canvas-body">
             {route === "cover"       && <AlmanacCover go={go} currentTemplate={currentTemplateCode} instance={liveInstance} />}
+            {route === "archetype"   && <ArchetypeScreen go={go} setCurrentTemplate={setCurrentTemplate} />}
             {route === "library"     && <LibraryScreen go={go} setCurrentTemplate={setCurrentTemplate} currentTemplateCode={currentTemplateCode} />}
             {route === "compose"     && <ComposeScreen go={go} />}
             {route === "pattern"     && <PatternScreen go={go} currentTemplateCode={currentTemplateCode} setCurrentTemplate={setCurrentTemplate} onFork={onFork} />}

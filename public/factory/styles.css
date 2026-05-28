@@ -1876,6 +1876,127 @@ input[type="range"].slider::-moz-range-thumb {
   border-top: 0;
 }
 
+/* ───────── Archetype selection screen ───────── */
+.archetype-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin-top: 8px;
+}
+
+.archetype-card {
+  background: var(--paper);
+  padding: 40px 32px;
+  cursor: pointer;
+  transition: background .14s ease;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 20px;
+  min-height: 300px;
+  position: relative;
+}
+.archetype-card:hover { background: var(--paper-2); }
+.archetype-card:hover .archetype-cta { color: var(--accent); }
+
+.archetype-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.archetype-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.archetype-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+}
+
+.archetype-oneliner {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(17px, 1.5vw, 22px);
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.archetype-hint {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-5);
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+
+.archetype-foot {
+  display: grid;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--rule-2);
+}
+.archetype-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.archetype-signal-chip {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  border: 1px solid var(--rule);
+  padding: 4px 7px;
+  background: rgba(255,255,255,0.012);
+}
+.archetype-cta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color .12s ease;
+}
+
+/* Spacetime chip on the archetype card */
+.archetype-spacetime {
+  position: absolute;
+  top: 14px; right: 16px;
+  display: flex;
+  gap: 5px;
+}
+.spacetime-chip {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-5);
+  border: 1px solid var(--rule);
+  padding: 3px 6px;
+}
+
+@media (max-width: 1180px) {
+  .archetype-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px) {
+  .archetype-grid { grid-template-columns: 1fr; }
+}
+
 /* ───────── Compose flow ───────── */
 .compose-layout {
   display: grid;
