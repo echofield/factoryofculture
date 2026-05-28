@@ -66,41 +66,41 @@ function PatternScreen({ go, currentTemplateCode, setCurrentTemplate, onFork }) 
           </div>
 
           {/* LAYER 2: Single canonical spine */}
-          <SectionRule num="§00" label="Action Spine" right="Challenge is the economic unit" />
+          <SectionRule num="§00" label="How a cycle runs" right="From signing up to a record" />
           <ActionSpine challenge={challenge} template={t} />
           <DiamondPassage template={t} />
 
-          <SectionRule num="§00B" label="Forkable challenge templates" right={t.challengeTemplates.length + " inherited modules"} />
+          <SectionRule num="§00B" label="Other challenges in this family" right={t.challengeTemplates.length + " · inherited"} />
           <ForkableChallengeTemplates template={t} />
 
           {/* Secondary: operating shape */}
-          <SectionRule num="§01" label="Operating Shape" right="What recurs" />
+          <SectionRule num="§01" label="How it runs" right="What recurs" />
           <div className="def-list">
             <DefRow k="Roles">
               <TokenList items={t.roles} />
             </DefRow>
-            <DefRow k="Proof rules">
-              <ol style={{margin:0, paddingLeft:18, color:"var(--ink-2)"}}>
-                {t.proof.map((p,i)=><li key={i} style={{padding:"3px 0"}}>{p}</li>)}
-              </ol>
+            <DefRow k="How you prove it">
+              <ul className="plain-list">
+                {t.proof.map((p,i)=><li key={i}>{p}</li>)}
+              </ul>
             </DefRow>
-            <DefRow k="Reward loop">
-              <ol style={{margin:0, paddingLeft:18, color:"var(--ink-2)"}}>
-                {t.rewards.map((p,i)=><li key={i} style={{padding:"3px 0"}}>{p}</li>)}
-              </ol>
+            <DefRow k="What members earn">
+              <ul className="plain-list">
+                {t.rewards.map((p,i)=><li key={i}>{p}</li>)}
+              </ul>
             </DefRow>
           </div>
 
-          <ArchiveGroup num="§02" label="Archive · Governance, Treasury, Onboarding" right="Read · 3 items">
+          <ArchiveGroup num="§02" label="Deeper · How it splits · Who decides · How you join" right="Read · 3 items">
             <div className="def-list">
-              <DefRow k="Treasury" tier="archival">
+              <DefRow k="How it splits" tier="archival">
                 <div style={{marginBottom:4}}><span className="serif-em">model · </span>{t.treasury.model}</div>
                 <div style={{fontSize:13}}>{t.treasury.split}</div>
               </DefRow>
-              <DefRow k="Governance" tier="archival">
+              <DefRow k="Who decides" tier="archival">
                 <span className="serif-em" style={{fontSize:14}}>{t.governance}</span>
               </DefRow>
-              <DefRow k="Onboarding" tier="archival">
+              <DefRow k="How you join" tier="archival">
                 <span className="serif-em" style={{fontSize:14}}>{t.onboarding}</span>
               </DefRow>
             </div>

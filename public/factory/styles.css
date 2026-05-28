@@ -1029,6 +1029,13 @@ body::after {
   gap: 8px;
   min-height: 150px;
 }
+.fork-template-hash {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-5);
+  text-transform: lowercase;
+}
 .fork-template strong {
   font-family: var(--font-display);
   font-size: 18px;
@@ -1130,16 +1137,16 @@ body::after {
 }
 .annot-key {
   font-family: var(--font-mono);
-  font-size: 8.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
   color: var(--ink-5);
 }
 .annot-val {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 15px;
-  letter-spacing: -0.02em;
+  font-size: 16px;
+  letter-spacing: -0.015em;
   color: var(--ink);
   line-height: 1.1;
 }
@@ -1231,10 +1238,10 @@ body::after {
 .pattern-hero .info .thesis {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 22px;
+  font-size: 19px;
   color: var(--ink-2);
   line-height: 1.4;
-  max-width: 36ch;
+  max-width: 40ch;
   text-wrap: pretty;
   margin: 0;
 }
@@ -1248,32 +1255,34 @@ body::after {
   margin: 32px 0 8px;
 }
 .primary-signals .sig {
-  padding: 20px 20px 24px 0;
+  padding: 18px 18px 20px 0;
   border-right: 1px solid var(--rule);
-  display: grid; gap: 8px;
+  display: grid; gap: 6px;
 }
 .primary-signals .sig:last-child { border-right: 0; padding-right: 0; }
-.primary-signals .sig + .sig { padding-left: 20px; }
+.primary-signals .sig + .sig { padding-left: 18px; }
 .primary-signals .sig .key {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-4);
 }
 .primary-signals .sig .val {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 23px;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.015em;
   color: var(--ink);
-  line-height: 1.1;
+  line-height: 1.2;
+  text-wrap: balance;
 }
 .primary-signals .sig .sub {
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--ink-3);
+  font-size: 10px;
+  color: var(--ink-4);
   letter-spacing: 0.04em;
+  line-height: 1.4;
 }
 
 /* Tier treatment on def-row */
@@ -1336,6 +1345,27 @@ details.archive-group[open] > summary .label::after {
 
 .def-list {
   display: grid; gap: 0;
+}
+.plain-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.plain-list li {
+  position: relative;
+  padding: 3px 0 3px 16px;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.plain-list li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
 }
 .def-row {
   display: grid;

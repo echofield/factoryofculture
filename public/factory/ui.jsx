@@ -244,17 +244,22 @@ function DiamondPassage({ template }) {
 }
 
 function ForkableChallengeTemplates({ template }) {
+  const shortHash = (id) => {
+    // CT_MUTUAL_AID_HELP_ACTION → ct·mutual-aid
+    const parts = id.replace(/^ct_/i, "").toLowerCase().split("_").slice(0, 2);
+    return "ct·" + parts.join("-");
+  };
   return (
     <div className="forkable-templates">
       {template.challengeTemplates.map((challenge) => (
         <div key={challenge.id} className="fork-template">
-          <div className="code-tag accent">{challenge.id}</div>
+          <div className="fork-template-hash">{shortHash(challenge.id)}</div>
           <strong>{challenge.title}</strong>
-          <p>{challenge.proof.join(" / ")}</p>
+          <p>{challenge.proof.join(" · ")}</p>
           <div className="fork-meta">
             <span>{challenge.deadline}</span>
-            <span>{challenge.validation}</span>
-            <span>{challenge.reward}</span>
+            <span>confirmed by {challenge.validation}</span>
+            <span>{challenge.reward} earned</span>
           </div>
         </div>
       ))}
@@ -276,12 +281,12 @@ function ComposeQuestions() {
 
 function ActionSpine({ challenge, template }) {
   const nodes = [
-    { id: "commitment", label: "Commitment", annot: challenge.stake,          annotKey: "stake" },
+    { id: "commitment", label: "Commitment", annot: challenge.stake,          annotKey: "to join" },
     { id: "attendance", label: "Attendance", annot: null },
     { id: "proof",      label: "Proof",      annot: null },
-    { id: "validation", label: "Validation", annot: challenge.reliability,    annotKey: "impact" },
-    { id: "reward",     label: "Reward",     annot: challenge.reward,         annotKey: "earned" },
-    { id: "trace",      label: "Trace",      annot: template.treasury.model,  annotKey: "treasury" },
+    { id: "validation", label: "Validation", annot: challenge.reliability,    annotKey: "trust" },
+    { id: "reward",     label: "Reward",     annot: challenge.reward,         annotKey: "earn" },
+    { id: "trace",      label: "Trace",      annot: template.treasury.model,  annotKey: "record" },
   ];
   const activeId = "proof";
 
