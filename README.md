@@ -181,7 +181,7 @@ This is a standard Next.js App Router project.
 vercel deploy
 ```
 
-For production, replace `data/kernel.json` with a durable store. Vercel serverless file writes are suitable for a local prototype and demos, not durable multi-user production persistence.
+Locally, JSON persistence writes to `data/kernel.json`. On Vercel, the prototype seeds from that file and writes to runtime temp storage so API routes can run without an external database. For production, replace this with a durable store; the current Vercel persistence is suitable for demos, not durable multi-user operation.
 
 ## Non-Goals
 
