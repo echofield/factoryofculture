@@ -70,9 +70,12 @@ function TokenList({ items }) {
   );
 }
 
-function Btn({ children, onClick, primary, arrow, style }) {
+function Btn({ children, onClick, primary, heat, arrow, style }) {
+  const cls = "btn"
+    + (primary ? " primary" : "")
+    + (heat ? " heat" : "");
   return (
-    <button className={"btn" + (primary ? " primary" : "")} onClick={onClick} style={style}>
+    <button className={cls} onClick={onClick} style={style}>
       {children}
       {arrow && <span className="arrow">→</span>}
     </button>

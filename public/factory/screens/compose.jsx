@@ -232,7 +232,7 @@ function ComposeScreen({ go }) {
               ) : (
                 <>
                   <Btn onClick={() => go("library")}>Save as draft</Btn>
-                  <Btn primary onClick={() => {
+                  <Btn heat onClick={() => {
                     // TODO: wire to backend — seal the composed card
                     go("library");
                   }} arrow>Seal it</Btn>

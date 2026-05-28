@@ -43,7 +43,7 @@ function StudioScreen({ go, currentTemplateCode, draft, setDraft, onSeal }) {
         </div>
         <div style={{display:"flex", gap:10}}>
           <Btn onClick={() => go("pattern")}>← Pattern</Btn>
-          <Btn primary onClick={() => { onSeal(draft, t); }} arrow>Seal v1.0</Btn>
+          <Btn heat onClick={() => { onSeal(draft, t); }} arrow>Seal v1.0</Btn>
         </div>
       </div>
 

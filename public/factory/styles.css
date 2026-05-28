@@ -21,6 +21,19 @@
   --accent-dim: rgba(212,165,116,0.22);
   --accent-soft: rgba(212,165,116,0.5);
 
+  /* ── Heat: structural, lit-from-underneath. Fires only when something real
+        happens. Editorial surfaces use --accent; heat is reserved for the
+        active spine node, the live kernel dot, the seal CTA, and (later)
+        sealed-edition pulse + genesis badge. */
+  --heat-coral: #c94a2e;
+  --heat-burnt: #d4830a;
+  --heat-gold:  #e8a020;
+  --heat-radial: radial-gradient(ellipse at 50% 100%,
+                   var(--heat-gold)  0%,
+                   var(--heat-burnt) 40%,
+                   var(--heat-coral) 80%);
+  --heat-glow: 0 0 24px rgba(232, 160, 32, 0.35);
+
   /* Semantic state palette — surface meaning, not aesthetic */
   --state-live: var(--accent);
   --state-active: var(--ink);
@@ -222,14 +235,24 @@ body::after {
   display: inline-flex; align-items: center; gap: 6px;
 }
 .canvas-header .header-meta .pulse::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  animation: pulse 2s ease-in-out infinite;
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--heat-radial);
+  box-shadow: var(--heat-glow);
+  animation: heat-breath 8s ease-in-out infinite;
 }
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
+}
+@keyframes heat-breath {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(232,160,32,0.25), 0 0 4px rgba(201,74,46,0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(232,160,32,0.55), 0 0 8px rgba(201,74,46,0.6);
+    transform: scale(1.08);
+  }
 }
 
 .canvas-body {
@@ -311,6 +334,24 @@ body::after {
   color: var(--paper);
   border-color: var(--accent);
 }
+/* Heat — reserved for the moment of commitment. One button per surface. */
+.btn.heat {
+  position: relative;
+  background: var(--heat-radial);
+  background-size: 100% 200%;
+  background-position: 0% 100%;
+  border-color: var(--heat-coral);
+  color: var(--paper);
+  font-weight: 600;
+  box-shadow: var(--heat-glow);
+  transition: background-position .35s ease, box-shadow .35s ease, transform .12s ease;
+}
+.btn.heat:hover {
+  background-position: 0% 0%;
+  box-shadow: 0 0 32px rgba(232,160,32,0.55), 0 0 8px rgba(201,74,46,0.6);
+  border-color: var(--heat-gold);
+}
+.btn.heat:active { transform: translateY(1px); }
 .btn .arrow {
   font-family: var(--font-display);
   letter-spacing: 0;
@@ -495,8 +536,15 @@ body::after {
   color: var(--ink-3);
 }
 .cover-twodoor .kernel-pulse {
-  color: var(--accent);
-  animation: pulse 2s ease-in-out infinite;
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--heat-radial);
+  color: transparent;
+  font-size: 0;
+  vertical-align: middle;
+  margin-right: 2px;
+  animation: heat-breath 8s ease-in-out infinite;
 }
 
 .cover-twodoor-center {
@@ -1124,10 +1172,28 @@ body::after {
 }
 
 .spine-node.active {
-  background: linear-gradient(180deg, rgba(212,165,116,0.1), rgba(212,165,116,0.03));
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.01), transparent 60%),
+    var(--paper);
+  overflow: hidden;
 }
+.spine-node.active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--heat-radial);
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 0;
+}
+.spine-node.active > * { position: relative; z-index: 1; }
 .spine-node.active .spine-node-label {
-  color: var(--accent);
+  color: var(--heat-gold);
+  text-shadow: 0 0 12px rgba(232,160,32,0.3);
+}
+.spine-node.active .annot-val {
+  color: #fff8ea;
 }
 
 .spine-node-annot {
