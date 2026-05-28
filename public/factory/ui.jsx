@@ -144,10 +144,10 @@ function ChallengeFlow({ compact }) {
   );
 }
 
-function ChallengeSignal({ challenge, compact }) {
+function ChallengeSignal({ challenge, compact, quiet }) {
   const proofCount = challenge.proof?.length || 0;
   return (
-    <div className={"challenge-signal" + (compact ? " compact" : "")}>
+    <div className={"challenge-signal" + (compact ? " compact" : "") + (quiet ? " quiet" : "")}>
       <div className="signal-top">
         <span className="live-dot"></span>
         <span>active challenge</span>
@@ -155,10 +155,19 @@ function ChallengeSignal({ challenge, compact }) {
       </div>
       <div className="signal-title">{challenge.title}</div>
       <div className="signal-meta">
-        <span>{challenge.stake} stake</span>
-        <span>{challenge.reward} reward</span>
-        <span>{challenge.reliability} reliability</span>
-        <span>{proofCount} proofs</span>
+        {quiet ? (
+          <>
+            <span>{challenge.reliability} reliability impact</span>
+            <span>{proofCount} proof requirements</span>
+          </>
+        ) : (
+          <>
+            <span>{challenge.stake} stake</span>
+            <span>{challenge.reward} reward</span>
+            <span>{challenge.reliability} reliability</span>
+            <span>{proofCount} proofs</span>
+          </>
+        )}
       </div>
     </div>
   );

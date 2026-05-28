@@ -2,8 +2,8 @@
 
 const ROUTES = [
   { key: "cover",       catalog: "FC·001", label: "Almanac",          right: "Cover" },
-  { key: "library",     catalog: "FC·010", label: "Architecture Library", right: "07 patterns" },
-  { key: "pattern",     catalog: "FC·020", label: "Pattern Detail",   right: "SC-014" },
+  { key: "library",     catalog: "FC·010", label: "Architecture Library", right: "05 patterns" },
+  { key: "pattern",     catalog: "FC·020", label: "Pattern Detail",   right: "PC-031" },
   { key: "studio",      catalog: "FC·030", label: "Studio · Customize", right: "Draft" },
   { key: "kernel",      catalog: "FC·040", label: "Kernel · Live",    right: "Running" },
   { key: "marketplace", catalog: "FC·050", label: "Marketplace",      right: "14 editions" },
@@ -12,7 +12,7 @@ const ROUTES = [
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#d4a574",
-  "activeTemplate": "SC",
+  "activeTemplate": "PC",
   "showNoise": true
 }/*EDITMODE-END*/;
 
@@ -32,7 +32,7 @@ function App() {
 
   // Active template (synced with Tweak)
   const setCurrentTemplate = (code) => setTweak("activeTemplate", code);
-  const currentTemplateCode = t.activeTemplate || "SC";
+  const currentTemplateCode = t.activeTemplate || "PC";
 
   // Studio draft state
   const [draft, setDraft] = React.useState(null);

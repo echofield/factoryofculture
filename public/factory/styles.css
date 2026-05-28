@@ -646,6 +646,32 @@ body::after {
 .challenge-signal.compact {
   padding: 12px 12px 11px;
 }
+.challenge-signal.quiet {
+  border-color: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.012);
+  gap: 7px;
+  padding: 11px 12px;
+}
+.challenge-signal.quiet .live-dot {
+  width: 5px;
+  height: 5px;
+  box-shadow: none;
+  opacity: 0.78;
+}
+.challenge-signal.quiet .signal-top {
+  color: var(--ink-5);
+}
+.challenge-signal.quiet .signal-mode {
+  color: var(--ink-3);
+}
+.challenge-signal.quiet .signal-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.challenge-signal.quiet .signal-meta {
+  color: var(--ink-4);
+}
 .signal-top {
   display: flex;
   align-items: center;
