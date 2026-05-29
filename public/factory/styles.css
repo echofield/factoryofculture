@@ -118,11 +118,7 @@ body::after {
   line-height: 1;
 }
 .sidebar-mark .wordmark span {
-  background: var(--heat-radial);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: var(--ink);
 }
 .sidebar-mark .sub {
   font-family: var(--font-mono);
@@ -525,7 +521,206 @@ body::after {
 .cover-foot .enter:hover { color: var(--accent); }
 .cover-foot .enter .arrow { font-size: 18px; }
 
-/* ───────── Two-door cover ───────── */
+/* ───────── Typographic cover ─────────
+   Heat lives only in the period. The wordmark stays cream.
+   Composition is left-anchored, monumental, with a stat column on the right
+   and quiet mono bars top + bottom. */
+.cover-typographic {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 48px;
+  padding: 32px 56px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.cover-typo-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 120px 120px;
+  z-index: 0;
+}
+.cover-typographic > *:not(.cover-typo-grid) { position: relative; z-index: 1; }
+
+.cover-typo-top,
+.cover-typo-foot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.cover-typo-top .l,
+.cover-typo-foot .l { text-align: left; }
+.cover-typo-top .r,
+.cover-typo-foot .r { text-align: right; }
+.cover-typo-top span,
+.cover-typo-foot span {
+  display: block;
+  color: var(--ink-5);
+  margin-top: 4px;
+}
+.cover-typo-foot {
+  align-items: end;
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+}
+.cover-typo-foot .l,
+.cover-typo-foot .r {
+  display: flex; align-items: center; gap: 10px;
+}
+.cover-typo-foot .r { justify-content: flex-end; }
+.cover-typo-foot .kernel-pulse {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--heat-radial);
+  color: transparent;
+  font-size: 0;
+  animation: heat-breath 8s ease-in-out infinite;
+}
+
+.cover-typo-hero {
+  display: grid;
+  align-content: center;
+  gap: 36px;
+  padding: 24px 0;
+}
+
+.cover-typo-cat {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.cover-typo-mark-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 64px;
+  align-items: start;
+}
+
+.cover-typo-mark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(72px, 12vw, 168px);
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.cover-typo-mark > span { display: block; }
+.cover-typo-dot {
+  color: var(--heat-burnt);
+  display: inline-block;
+}
+
+.cover-typo-stats {
+  display: grid;
+  gap: 24px;
+  padding-top: 12px;
+  min-width: 180px;
+  text-align: right;
+}
+.cover-typo-stats .stat {
+  display: grid;
+  gap: 4px;
+}
+.cover-typo-stats .key {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+.cover-typo-stats .val {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(36px, 4.4vw, 56px);
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.cover-typo-strap {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(18px, 1.6vw, 22px);
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 36ch;
+  line-height: 1.45;
+}
+
+.cover-typo-doors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--rule);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.cover-typo-door {
+  background: var(--paper);
+  border: 0;
+  color: var(--ink);
+  padding: 22px 24px;
+  cursor: pointer;
+  font-family: inherit;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  text-align: left;
+  transition: all .14s ease;
+}
+.cover-typo-door:hover { background: var(--paper-2); }
+.cover-typo-door:hover .door-arrow { color: var(--heat-gold); transform: translateX(4px); }
+.cover-typo-door .door-num {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--ink-4);
+}
+.cover-typo-door .door-label {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+.cover-typo-door .door-arrow {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--ink-3);
+  transition: all .14s ease;
+}
+
+@media (max-width: 980px) {
+  .cover-typographic { padding: 24px 28px 22px; gap: 36px; }
+  .cover-typo-mark-row { grid-template-columns: 1fr; gap: 32px; }
+  .cover-typo-stats { text-align: left; display: flex; gap: 48px; }
+}
+@media (max-width: 600px) {
+  .cover-typo-doors { grid-template-columns: 1fr; }
+  .cover-typo-stats { flex-direction: column; gap: 18px; }
+  .cover-typo-top,
+  .cover-typo-foot { font-size: 9.5px; }
+}
+
+/* ───────── Two-door cover (legacy) ───────── */
 .cover-twodoor {
   min-height: 100vh;
   display: grid;
